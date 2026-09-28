@@ -142,7 +142,12 @@ if (withHistory) {
     report("git", "history requested but this folder is not a Git repository", "");
   } else {
     const log = git("log", "--all", "--format=%an%n%ae%n%cn%n%ce%n%B%n--end--");
-    const cleaned = log.replace(/[0-9]+\+[A-Za-z0-9-]+@users\.noreply\.github\.com/g, "noreply@example.com");
+    // No-reply addresses in author fields and commit trailers (for example GitHub's
+    // private commit email or a co-author trailer) are non-personal by design.
+    // Names in the same fields are still checked against the denylist.
+    const cleaned = log
+      .replace(/[0-9]+\+[A-Za-z0-9-]+@users\.noreply\.github\.com/g, "noreply@example.com")
+      .replace(/\b[A-Za-z0-9._+-]*no-?reply@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/gi, "noreply@example.com");
     scanText("git-log", cleaned);
     const objects = git("rev-list", "--all", "--objects")
       .split("\n")
