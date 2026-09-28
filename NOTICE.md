@@ -6,32 +6,42 @@ Copyright (c) 2026 Nitheesh Chanambatla, trading as ASTRAYAN Web Studio.
 
 ## What the MIT License covers
 
-The MIT License in [`LICENSE`](LICENSE) applies to the reusable source code and
-tooling in this repository: the TypeScript, CSS, HTML templates, build
-configuration, scripts, and workflow files. It does not extend to the material
-listed in the next section, even where that material appears inside a source
-file.
+The MIT License in [`LICENSE`](LICENSE) applies to the reusable parts of this
+repository:
+
+- source code, including the TypeScript, CSS, and HTML templates;
+- build configuration;
+- audit scripts, the artwork generator script, and other tooling;
+- CI workflow files;
+- documentation, including the source-code examples in it (commands, code, and
+  configuration snippets).
 
 ## What it does not cover
 
-The MIT License does **not** grant any right to use the following, unless a file
-explicitly says otherwise:
+The MIT License does **not** grant any right to use the following material:
 
-- the names **Defensive Signal** and **ASTRAYAN Web Studio**, and any logos,
-  wordmarks, or trade dress associated with them, including the wordmark symbol
-  drawn in `src/render/layout.ts`;
-- trademarks of any third party mentioned in the documentation;
-- the demonstration identity "Avery Example" and all demonstration content in
-  `src/content/profile.ts`, which is fictional and provided only so the starter
-  renders something meaningful;
-- the artwork in `public/artwork/` and `public/favicon.svg`, and any artwork
-  produced by `scripts/generate-artwork.mjs` (the script itself is code and is
-  covered by the MIT License);
-- any portrait, photograph, or likeness. This repository contains none, and you
-  must not add one you do not have permission to publish.
+- **Defensive Signal** — the name and its branding, including the wordmark
+  symbol drawn in `src/render/layout.ts` and the favicon;
+- **ASTRAYAN Web Studio** — the name, wordmark, symbols, logos, and trade dress;
+- **Avery Example** — the fictional identity and all demonstration content,
+  including the profile, contact details, principles, practice areas, case
+  notes, and learning notes in `src/content/profile.ts`;
+- **artwork** — the generated artwork in `public/artwork/` and the favicon
+  artwork in `public/favicon.svg`, including identical copies regenerated with
+  the default settings of `scripts/generate-artwork.mjs`;
+- **likenesses and media** — any portrait, photograph, likeness, or other media
+  added in future without separate permission (this repository contains none);
+- **third-party trademarks** mentioned anywhere in the repository.
 
-You may keep the demonstration content and artwork while evaluating the starter
-locally. Replace them with your own before publishing a site built from it.
+This material stays excluded even when it appears inside a source or
+documentation file. For example, the documentation's code examples are
+MIT-licensed, but the fictional names, sample profile text, branding, and
+artwork that appear alongside them are not.
+
+You may keep the demonstration content, branding, and artwork while evaluating
+the starter locally. Replace them with your own before publishing a site built
+from it. Artwork you create yourself, including artwork you generate with your
+own settings in `scripts/generate-artwork.mjs`, is yours.
 
 ## Fictional content
 

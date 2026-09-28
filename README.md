@@ -86,10 +86,13 @@ docs/                                           architecture and guides
 ## License
 
 The copyright notice is in [`LICENSE`](LICENSE) and [`NOTICE.md`](NOTICE.md).
-The reusable source code and tooling are released under the
-[MIT License](LICENSE). Names, logos, branding, trademarks, the demonstration
-identity and content, and the artwork are **not** licensed under MIT; see
-[`NOTICE.md`](NOTICE.md) for the exact boundaries.
+The source code, tooling, CI workflow, and documentation, including the code
+examples in the documentation, are released under the [MIT License](LICENSE).
+The Defensive Signal and ASTRAYAN Web Studio names and branding, the fictional
+Avery Example identity and demonstration content, the generated and favicon
+artwork, and any likeness are **not** licensed under MIT, even where they appear
+inside a source or documentation file. See [`NOTICE.md`](NOTICE.md) for the
+exact boundaries.
 
 Published by ASTRAYAN Web Studio. The starter is provided as is, without
 warranty, as stated in the license.

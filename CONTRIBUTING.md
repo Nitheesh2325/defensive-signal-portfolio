@@ -54,7 +54,8 @@ request which of these you tested and which you did not.
 - Regenerate artwork with `node scripts/generate-artwork.mjs` rather than
   editing the SVG by hand.
 
-By contributing, you confirm that you have the right to submit your
-contribution, and you agree that your code contributions are licensed under
-the MIT License in this repository. Do not contribute names, logos, artwork, or
-personal content that you do not have permission to license.
+By contributing, you agree that your contributions to the source code, tooling,
+CI workflow, and documentation are licensed under the MIT License in this
+repository, as described in [`NOTICE.md`](NOTICE.md). Do not contribute names,
+logos, artwork, likenesses, or personal content that you do not have permission
+to share.

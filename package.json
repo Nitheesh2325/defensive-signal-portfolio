@@ -4,7 +4,7 @@
   "private": true,
   "description": "Defensive Signal — an accessible, runtime-dependency-free cybersecurity portfolio starter with fictional demonstration content.",
   "license": "MIT",
-  "author": "ASTRAYAN Web Studio",
+  "author": "Nitheesh Chanambatla, trading as ASTRAYAN Web Studio",
   "type": "module",
   "engines": {
     "node": "^20.19.0 || >=22.12.0"

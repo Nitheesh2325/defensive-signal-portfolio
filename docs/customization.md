@@ -33,8 +33,10 @@ Demonstration builds are `noindex, nofollow`. When you are ready:
 
 ## 3. Artwork and images
 
-- Keep the generated contour artwork, change its colors or seed in
-  `scripts/generate-artwork.mjs`, or replace it with your own original work.
+- Replace the bundled contour artwork and favicon before publishing. They are
+  excluded from the MIT License (see `NOTICE.md`). Generate your own with a
+  different seed and colors in `scripts/generate-artwork.mjs`, or use your own
+  original work.
 - Do not publish a photograph of anyone without their permission.
 - Strip metadata from any raster image you add. The privacy scan fails on EXIF
   and XMP blocks it can detect.

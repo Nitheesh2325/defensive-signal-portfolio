@@ -24,13 +24,14 @@ export const guide: readonly GuideSection[] = [
   },
   {
     id: "replace",
-    title: "Replace the demonstration identity",
+    title: "Replace the demonstration content",
     paragraphs: [
       "All profile and case-note content for Home, Profile, and Work lives in one typed module, src/content/profile.ts. The compiler checks your edits against src/content/schema.ts. Interface labels such as headings and buttons are in src/render/pages.ts.",
     ],
     steps: [
       "Rewrite the person, contact, practice, work, and learning entries with facts you can support.",
       "Use your real contact addresses only where you are happy for them to be public.",
+      "Replace the bundled artwork and favicon. Like the demonstration content and branding, they are excluded from the MIT License; see NOTICE.md.",
       "Set site.demonstration to false once no fictional content remains. The banner disappears.",
       "Set site.indexable to true and site.origin to your address when you want search engines to list the site.",
     ],
@@ -47,7 +48,7 @@ export const guide: readonly GuideSection[] = [
     id: "artwork",
     title: "Artwork and motion",
     paragraphs: [
-      "The contour artwork is an original SVG in public/artwork/. It is decorative, carries no information, and the page composes correctly if it fails to load.",
+      "The contour artwork is an original SVG in public/artwork/. It is decorative, carries no information, and the page composes correctly if it fails to load. It is not covered by the MIT License, so replace it with your own before publishing.",
       "When motion is allowed, a slow sweep is drawn on a Canvas above it. The sweep stops when the artwork is offscreen or the tab is hidden, never runs under reduced motion, and has a visible pause control.",
       "Do not replace the artwork with a photograph of someone else, and do not publish a portrait you do not have permission to use.",
     ],

@@ -7,6 +7,12 @@ project uses semantic versioning.
 
 ### Changed
 
+- Licensing: the MIT License now explicitly covers the source code, tooling,
+  CI workflow, and documentation, including documentation code examples.
+  NOTICE.md lists the excluded names, branding, fictional demonstration
+  content, bundled artwork, and likenesses, which stay excluded inside source
+  and documentation files. The package author now matches the copyright owner
+  named in LICENSE.
 - Public text now uses US English consistently. The package description now
   says "runtime-dependency-free" instead of "dependency-free", matching the
   README; development dependencies are listed in NOTICE.md.
