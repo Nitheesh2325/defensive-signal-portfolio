@@ -1,0 +1,28 @@
+name: Feature request
+description: Suggest an improvement that fits the starter's goals.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Defensive Signal stays small, accessible, private by default, and free of runtime dependencies.
+        Proposals that add tracking, third-party requests, or proficiency scores will be declined.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What do you propose?
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Accessibility, privacy, and performance impact
+      description: How does this affect keyboard use, reduced motion, JavaScript-off readability, and page weight?
+    validations:
+      required: true
