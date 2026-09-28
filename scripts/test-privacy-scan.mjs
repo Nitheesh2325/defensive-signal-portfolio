@@ -39,6 +39,9 @@ delete gitEnv.DS_PRIVACY_DENYLIST;
 
 const denylist = join(workspace, "denylist.json");
 writeFileSync(denylist, JSON.stringify({ terms: [CANARY_NAME] }));
+// The same term, expected only in the licence files.
+const denylistWithAllow = join(workspace, "denylist-allow.json");
+writeFileSync(denylistWithAllow, JSON.stringify({ terms: [CANARY_NAME], allow: { [CANARY_NAME]: ["LICENSE", "legal/LICENSE"] } }));
 
 let failures = 0;
 const check = (label, condition, detail = "") => {
@@ -54,7 +57,10 @@ function makeRepo(name) {
   git("init", "-q", "-b", "main");
   git("config", "commit.gpgsign", "false");
   git("config", "core.autocrlf", "false");
-  const write = (file, text) => writeFileSync(join(dir, file), text);
+  const write = (file, text) => {
+    mkdirSync(dirname(join(dir, file)), { recursive: true });
+    writeFileSync(join(dir, file), text);
+  };
   const commit = (message) => {
     git("add", "-A");
     git("commit", "-q", "-m", message);
@@ -66,9 +72,9 @@ function makeRepo(name) {
   return { dir, write, commit, remove, rename };
 }
 
-function scan(dir, { withDenylist = true, history = true } = {}) {
+function scan(dir, { withDenylist = true, list = denylist, history = true } = {}) {
   const env = { ...gitEnv };
-  if (withDenylist) env.DS_PRIVACY_DENYLIST = denylist;
+  if (withDenylist) env.DS_PRIVACY_DENYLIST = list;
   const args = [join(dir, "scripts", "privacy-scan.mjs")];
   if (history) args.push("--history");
   const run = spawnSync(process.execPath, args, { cwd: dir, env, encoding: "utf8" });
@@ -139,7 +145,73 @@ try {
     check("personal address in a commit message fails", result.status === 1 && /git-log:\d+\s+email address/.test(result.output), result.output);
   }
 
-  // 5. The scan fails closed when history cannot be read.
+  // 5. Denylist allowances are per path, even when paths share identical content.
+  const credit = `Copyright (c) 2026 ${CANARY_NAME}\n`;
+  {
+    // Same blob under an allowed and a non-allowed path; the non-allowed copy is
+    // then deleted so only history holds it.
+    const repo = makeRepo("mixed-paths");
+    repo.write("LICENSE", credit);
+    repo.write("notes.md", credit);
+    repo.commit("Add licence and notes");
+    repo.remove("notes.md");
+    repo.commit("Remove notes");
+    const result = scan(repo.dir, { list: denylistWithAllow });
+    check("identical content under a non-allowlisted path fails", result.status === 1, result.output);
+    check(
+      "finding names the non-allowlisted historical path",
+      /blob=[0-9a-f]{12}:notes\.md:1\s+denylisted identifier/.test(result.output),
+      result.output,
+    );
+    check("the allowlisted path is not reported", !/:LICENSE:\d+\s+denylisted/.test(result.output), result.output);
+    check("denylisted term is never printed (mixed paths)", leaksNothing(result.output), result.output);
+  }
+  {
+    // Same blob only under allowlisted paths.
+    const repo = makeRepo("allowed-paths");
+    repo.write("LICENSE", credit);
+    repo.write("legal/LICENSE", credit);
+    repo.commit("Add licences");
+    const result = scan(repo.dir, { list: denylistWithAllow });
+    check("identical content only under allowlisted paths passes", result.status === 0, result.output);
+  }
+  {
+    // Moved from an allowlisted path to a non-allowlisted one, then deleted.
+    const repo = makeRepo("renamed-out-of-allow");
+    repo.write("LICENSE", credit);
+    repo.commit("Add licence");
+    repo.rename("LICENSE", "credits.md");
+    repo.commit("Move licence text");
+    repo.remove("credits.md");
+    repo.commit("Remove credits");
+    const current = scan(repo.dir, { list: denylistWithAllow, history: false });
+    check("renamed-then-deleted content is absent from the working tree", current.status === 0, current.output);
+    const result = scan(repo.dir, { list: denylistWithAllow });
+    check(
+      "renamed and deleted content fails at its non-allowlisted path",
+      result.status === 1 && /blob=[0-9a-f]{12}:credits\.md:1\s+denylisted identifier/.test(result.output),
+      result.output,
+    );
+  }
+
+  // 6. The scan fails closed on a real shallow clone.
+  {
+    const repo = makeRepo("full-for-shallow");
+    repo.write("a.md", "first\n");
+    repo.commit("Add a");
+    repo.write("a.md", "second\n");
+    repo.commit("Change a");
+    const shallow = join(workspace, "shallow");
+    // --depth is ignored for plain local paths, so clone through a file:// URL.
+    const source = `file:///${repo.dir.split("\\").join("/").replace(/^\/+/, "")}`;
+    execFileSync("git", ["clone", "-q", "--depth", "1", source, shallow], { env: gitEnv, stdio: "pipe" });
+    const isShallow = execFileSync("git", ["rev-parse", "--is-shallow-repository"], { cwd: shallow, env: gitEnv, encoding: "utf8" }).trim();
+    check("test clone is really shallow", isShallow === "true", isShallow);
+    const result = scan(shallow, { withDenylist: false });
+    check("--history on a shallow clone fails closed", result.status === 1 && /shallow clone/.test(result.output), result.output);
+  }
+
+  // 7. The scan fails closed outside a Git repository.
   {
     const dir = join(workspace, "not-a-repo");
     mkdirSync(join(dir, "scripts"), { recursive: true });

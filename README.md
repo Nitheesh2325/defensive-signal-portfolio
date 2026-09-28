@@ -26,8 +26,8 @@ finished site before replacing every word with your own.
   or network requests** after the page loads. A strict Content Security Policy
   is added to every built page.
 - **Audits you can run locally and in CI**: a site audit of the build output
-  and an identity/privacy scan of the repository, the build, and every file
-  ever committed to Git history, including deleted ones.
+  and an identity/privacy scan of the repository, the build, and every unique
+  file content (blob) in Git history, including content from deleted files.
 
 ## Quick start
 

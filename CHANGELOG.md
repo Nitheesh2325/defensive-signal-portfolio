@@ -11,12 +11,15 @@ project uses semantic versioning.
   Git history, including files that were later deleted or renamed, fails closed
   when history cannot be read completely, and masks matched values in its
   report.
+- The history scan keeps every path a blob appeared under and applies
+  denylist allowances per path, so identical content under an allowed and a
+  non-allowed path is still reported. Generic rules still run once per blob.
 
 ### Added
 
 - `npm run test:privacy`, a regression test that runs the history scan against
-  disposable Git repositories with fictional canaries. CI runs it before the
-  privacy scan.
+  disposable Git repositories with fictional canaries, including shared-blob
+  allowance cases and a real shallow clone. CI runs it before the privacy scan.
 
 ## [0.1.0] — 2026-09-28
 

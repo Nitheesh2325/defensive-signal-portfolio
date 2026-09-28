@@ -117,8 +117,13 @@ const isLockfile = (path) => path === "package-lock.json";
 
 // `file` is the repository path checked against the denylist `allow` list.
 const scanText = (where, file, text, { lockfile = false } = {}) => {
-  const lines = text.split(/\r?\n/);
-  lines.forEach((line, i) => {
+  scanGeneric(where, text, { lockfile });
+  scanDenylist(where, file, text);
+};
+
+// Generic rules depend only on content, so each text is checked once.
+function scanGeneric(where, text, { lockfile = false } = {}) {
+  text.split(/\r?\n/).forEach((line, i) => {
     const at = `${where}:${i + 1}`;
     for (const rule of RULES) {
       // The lockfile carries upstream package metadata (integrity digests, funding
@@ -128,14 +133,21 @@ const scanText = (where, file, text, { lockfile = false } = {}) => {
         if (!rule.keep || rule.keep(m[0], m[1])) report(at, rule.name, m[0]);
       }
     }
+  });
+}
+
+// Denylist allowances are path-specific, so this runs once per path.
+function scanDenylist(where, file, text) {
+  if (!terms.length) return;
+  text.split(/\r?\n/).forEach((line, i) => {
     const lower = line.toLowerCase();
     for (const term of terms) {
       if (!lower.includes(term.toLowerCase())) continue;
       const allowedIn = allow[term] ?? [];
-      if (!allowedIn.includes(file)) report(at, "denylisted identifier", "[redacted]");
+      if (!allowedIn.includes(file)) report(`${where}:${i + 1}`, "denylisted identifier", "[redacted]");
     }
   });
-};
+}
 
 for (const file of allFiles) {
   const name = rel(file);
@@ -184,8 +196,12 @@ function scanHistory() {
   // Every blob reachable from every ref, found by walking the full tree of every
   // commit, so files that were later deleted or renamed are still included.
   const commits = git("rev-list", "--all").split("\n").filter(Boolean);
-  const blobs = new Map(); // blob id -> first { commit, path } it was seen at
+  // A blob (one exact file content) can appear under several paths and commits.
+  // Its content is read once, but every distinct path is kept, because denylist
+  // allowances are path-specific.
+  const blobs = new Map(); // blob id -> Map(path -> first commit it appeared at under that path)
   const paths = new Set();
+  let locationCount = 0;
   for (const commit of commits) {
     const entries = git("ls-tree", "-r", "-z", "--full-tree", commit).split("\0").filter(Boolean);
     for (const entry of entries) {
@@ -195,9 +211,20 @@ function scanHistory() {
       const path = entry.slice(tab + 1);
       if (!type || !id || !path) throw new Error(`unreadable tree entry in commit ${commit}`);
       paths.add(path);
-      if (type === "blob" && !blobs.has(id)) blobs.set(id, { commit, path });
+      if (type !== "blob") continue;
+      if (!blobs.has(id)) blobs.set(id, new Map());
+      const locations = blobs.get(id);
+      if (!locations.has(path)) {
+        locations.set(path, commit);
+        locationCount++;
+      }
     }
   }
+  // A stable representative location for findings that depend only on content.
+  const representative = (id) => {
+    const [path, commit] = [...blobs.get(id)].sort(([a], [b]) => a.localeCompare(b))[0];
+    return { path, commit };
+  };
 
   for (const path of paths) {
     for (const term of terms) {
@@ -241,19 +268,31 @@ function scanHistory() {
       if (content.length !== length) throw new Error(`truncated content for blob ${id}`);
       offset = headerEnd + 1 + length + 1;
 
-      const { commit, path } = blobs.get(id);
-      const where = historyLocation(commit, id, path);
-      const ext = extname(path).toLowerCase();
-      if (IMAGE_EXT.has(ext)) {
-        if (IMAGE_METADATA.test(content.toString("latin1"))) report(where, "image metadata (EXIF/XMP)", path);
+      const locations = [...blobs.get(id)];
+      const rep = representative(id);
+      const repWhere = historyLocation(rep.commit, id, rep.path);
+
+      for (const [path, commit] of locations) {
+        if (extname(path).toLowerCase() === ".map") report(historyLocation(commit, id, path), "source map file", path);
+      }
+      const imagePath = locations.find(([path]) => IMAGE_EXT.has(extname(path).toLowerCase()));
+      if (imagePath) {
+        if (IMAGE_METADATA.test(content.toString("latin1"))) {
+          report(historyLocation(imagePath[1], id, imagePath[0]), "image metadata (EXIF/XMP)", imagePath[0]);
+        }
         continue;
       }
-      if (ext === ".map") report(where, "source map file", path);
       if (isBinary(content)) {
         binarySkipped++;
         continue;
       }
-      scanText(where, path, content.toString("utf8"), { lockfile: isLockfile(path) });
+
+      const text = content.toString("utf8");
+      // Generic rules once per blob. Lockfile exceptions apply only when every
+      // path this content ever had is the lockfile.
+      scanGeneric(repWhere, text, { lockfile: locations.every(([path]) => isLockfile(path)) });
+      // Denylist once per distinct historical path, with that path's allowances.
+      for (const [path, commit] of locations) scanDenylist(historyLocation(commit, id, path), path, text);
     }
     batch = [];
     batchSize = 0;
@@ -261,7 +300,7 @@ function scanHistory() {
 
   for (const id of ids) {
     const size = sizes.get(id);
-    const { commit, path } = blobs.get(id);
+    const { commit, path } = representative(id);
     if (size > HISTORY_LIMITS.blobBytes) {
       report(historyLocation(commit, id, path), "historical blob too large to scan; review it by hand", "");
       continue;
@@ -279,8 +318,9 @@ function scanHistory() {
 
   const remotes = git("remote").trim();
   console.log(
-    `History scanned: ${commits.length} commit(s), ${paths.size} path(s), ${ids.length} unique blob(s)` +
-      ` (${(total / 1024).toFixed(0)} KB, ${binarySkipped} binary skipped). Remotes: ${remotes || "none"}.`,
+    `History scanned: ${commits.length} commit(s), ${paths.size} distinct path(s), ${ids.length} unique blob(s)` +
+      ` found at ${locationCount} blob/path location(s)` +
+      ` (${(total / 1024).toFixed(0)} KB read, ${binarySkipped} binary blob(s) skipped). Remotes: ${remotes || "none"}.`,
   );
 }
 

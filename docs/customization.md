@@ -74,12 +74,21 @@ npm run audit:privacy -- --history
 ```
 
 With `--history`, the scan reads everything reachable in Git history: commit
-messages and authors, every path, and the contents of every file version ever
-committed, including files that were later deleted or renamed. Deleting a leaked
-file in a new commit does not remove it from history; if the scan finds one,
-rewrite the history before the repository is ever pushed. GitHub no-reply author
-addresses are permitted. Findings name the commit, blob, and path, and never
-print a denylisted term.
+messages and authors, every historical path, and every unique historical blob,
+including content from files that were later deleted or renamed.
+
+A blob is one exact file content. Git stores identical content once, so one
+blob can appear under several paths and in many commits, and the number of
+unique blobs is usually smaller than the number of file versions a history
+contains. The scan reads each unique blob once, applies the generic rules to it
+once, and applies the denylist separately for every path the blob ever had, so
+an `allow` entry for one path never excuses the same content under another.
+
+Deleting a leaked file in a new commit does not remove it from history; if the
+scan finds one, rewrite the history before the repository is ever pushed.
+GitHub no-reply author addresses are permitted. Findings name the commit, blob,
+and path (the exact path for denylist findings, a representative one for
+generic findings), and never print a denylisted term.
 
 If history cannot be read completely (for example a shallow clone), the scan
 fails rather than passing on partial evidence.
