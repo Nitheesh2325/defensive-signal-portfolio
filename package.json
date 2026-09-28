@@ -2,7 +2,7 @@
   "name": "defensive-signal-portfolio",
   "version": "0.1.0",
   "private": true,
-  "description": "Defensive Signal — an accessible, dependency-free cybersecurity portfolio starter with fictional demonstration content.",
+  "description": "Defensive Signal — an accessible, runtime-dependency-free cybersecurity portfolio starter with fictional demonstration content.",
   "license": "MIT",
   "author": "ASTRAYAN Web Studio",
   "type": "module",

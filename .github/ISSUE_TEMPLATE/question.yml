@@ -1,5 +1,5 @@
 name: Question
-description: Ask how to use or customise the starter.
+description: Ask how to use or customize the starter.
 labels: [question]
 body:
   - type: textarea

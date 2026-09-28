@@ -66,11 +66,11 @@ The sweep is the only animation. It:
 
 | File | Contents |
 | --- | --- |
-| `tokens.css` | Colour, type, spacing, and radius tokens for light and dark |
+| `tokens.css` | Color, type, spacing, and radius tokens for light and dark |
 | `base.css` | Reset, typography defaults, focus ring, skip link |
 | `layout.css` | Page frame, notice strip, top bar, headings, TOC layout, footer |
 | `components.css` | Lede, artwork plate, principles, case notes, filter, guide |
-| `modes.css` | Reduced motion, forced colours, print |
+| `modes.css` | Reduced motion, forced colors, print |
 
 ## Security posture
 

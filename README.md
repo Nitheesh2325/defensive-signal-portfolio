@@ -1,9 +1,9 @@
 # Defensive Signal — Accessible Cybersecurity Portfolio Starter
 
-Defensive Signal is a small, runtime-dependency-free starter for building an honest,
-accessible portfolio for security work. It ships with a clearly labelled
+Defensive Signal is a small, runtime-dependency-free starter for building an
+honest, accessible portfolio for security work. It ships with a clearly labeled
 fictional practitioner, **Avery Example**, so you can see the shape of a
-finished site before replacing every word with your own.
+finished site before replacing the content with your own.
 
 > **Demonstration content.** Avery Example is not a real person. Every case
 > note is invented. Contact details use the reserved `example.invalid` domain.
@@ -12,20 +12,21 @@ finished site before replacing every word with your own.
 
 - **Four routes** — Home, Profile, Work, and Guide — each a complete HTML page
   that reads well with JavaScript turned off.
-- **One typed content module.** Everything a visitor reads on Home, Profile,
-  and Work comes from `src/content/profile.ts`, checked against
-  `src/content/schema.ts`. The schema has no fields for skill percentages or
+- **One typed content module.** All profile and case-note content on Home,
+  Profile, and Work comes from `src/content/profile.ts`, checked against
+  `src/content/schema.ts`. Interface labels such as headings and buttons live
+  in `src/render/pages.ts`. The schema has no fields for skill percentages or
   invented metrics.
 - **Case notes** structured as context, approach, result, and what is still
   open, with a shareable practice-area filter on the Work route.
-- **Original abstract artwork** (contour rings around a quiet centre) with an
+- **Original abstract artwork** (contour rings around a quiet center) with an
   optional Canvas sweep that respects reduced motion, pauses offscreen, and has
   a visible pause control.
 - **Light and dark themes** that follow the visitor's system setting.
 - **No runtime dependencies, analytics, trackers, cookies, storage, web fonts,
   or network requests** after the page loads. A strict Content Security Policy
   is added to every built page.
-- **Audits you can run locally and in CI**: a site audit of the build output
+- **Audits you can run locally and in CI:** a site audit of the build output
   and an identity/privacy scan of the repository, the build, and every unique
   file content (blob) in Git history, including content from deleted files.
 
@@ -78,14 +79,17 @@ docs/                                           architecture and guides
 
 - [Architecture](docs/architecture.md)
 - [Accessibility](docs/accessibility.md)
-- [Privacy-safe customisation](docs/customization.md)
+- [Privacy-safe customization](docs/customization.md)
 - [Deployment](docs/deployment.md)
 - [Contributing](CONTRIBUTING.md) · [Security policy](SECURITY.md) · [Support](SUPPORT.md)
 
 ## License
 
-Code is released under the [MIT License](LICENSE). Names, demonstration
-content, artwork, and branding are **not** covered by that license; see
-[`NOTICE.md`](NOTICE.md).
+The copyright notice is in [`LICENSE`](LICENSE) and [`NOTICE.md`](NOTICE.md).
+The reusable source code and tooling are released under the
+[MIT License](LICENSE). Names, logos, branding, trademarks, the demonstration
+identity and content, and the artwork are **not** licensed under MIT; see
+[`NOTICE.md`](NOTICE.md) for the exact boundaries.
 
-Published by ASTRAYAN Web Studio.
+Published by ASTRAYAN Web Studio. The starter is provided as is, without
+warranty, as stated in the license.

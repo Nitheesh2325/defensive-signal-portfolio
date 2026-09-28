@@ -3,7 +3,7 @@
 //
 //   node scripts/generate-artwork.mjs
 //
-// The drawing is a set of irregular contour rings around a quiet centre, with a few
+// The drawing is a set of irregular contour rings around a quiet center, with a few
 // short radial ticks on the outer rings. It depicts no person and carries no
 // information; pages must read correctly without it.
 
@@ -61,7 +61,7 @@ function smoothPath(pts) {
   return `${d}Z`;
 }
 
-// Colours are presentation attributes, not a <style> block, so the files still render
+// Colors are presentation attributes, not a <style> block, so the files still render
 // on hosts that send a strict Content-Security-Policy header with every response.
 const PALETTES = {
   light: { ink: "#2a3a52", accent: "#b3431d" },

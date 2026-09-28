@@ -26,10 +26,10 @@ export const content: PortfolioContent = {
     role: "Defensive security practitioner (fictional)",
     base: "Remote · Example Region",
     statement:
-      "Avery is a made-up practitioner who cares about quiet, well-evidenced defence: logs that answer real questions, threat models people actually read, and fixes that stay fixed.",
+      "Avery is a made-up practitioner who cares about quiet, well-evidenced defense: logs that answer real questions, threat models people actually read, and fixes that stay fixed.",
     introduction: [
       "Avery Example exists only to demonstrate this starter. The profile shows how to describe security work honestly: what was done, why, and what is still uncertain.",
-      "The imagined practice centres on small teams without a dedicated security function, where the most useful work is often making existing systems observable and making risky changes easier to review.",
+      "The imagined practice centers on small teams without a dedicated security function, where the most useful work is often making existing systems observable and making risky changes easier to review.",
     ],
   },
 
@@ -70,7 +70,7 @@ export const content: PortfolioContent = {
       title: "Application security",
       summary: "Helping product teams find design risks while they are still cheap to change.",
       activities: [
-        "Running short threat-modelling sessions on new features",
+        "Running short threat-modeling sessions on new features",
         "Reviewing authentication and file-handling code paths",
         "Turning review findings into small, testable tickets",
       ],
@@ -90,7 +90,7 @@ export const content: PortfolioContent = {
     {
       slug: "response",
       title: "Incident readiness",
-      summary: "Practising the first hour of an incident before it happens.",
+      summary: "Practicing the first hour of an incident before it happens.",
       activities: [
         "Facilitating tabletop exercises with realistic, low-drama scenarios",
         "Keeping contact lists and escalation paths current",
@@ -122,11 +122,11 @@ export const content: PortfolioContent = {
     },
     {
       slug: "upload-threat-model",
-      title: "Threat modelling a file-upload feature",
+      title: "Threat modeling a file-upload feature",
       area: "application",
       teaser: "A one-hour session on a planned upload feature surfaced three design changes before any code was written.",
       context:
-        "A fictional product team planned to let users upload documents. Avery facilitated a one-hour threat-modelling session using a whiteboard data-flow diagram.",
+        "A fictional product team planned to let users upload documents. Avery facilitated a one-hour threat-modeling session using a whiteboard data-flow diagram.",
       approach: [
         "Drew the upload path from browser to storage with the team",
         "Asked what could go wrong at each boundary using simple prompts",
@@ -164,7 +164,7 @@ export const content: PortfolioContent = {
       area: "response",
       teaser: "A calm, forty-five-minute exercise showed gaps in who could revoke access out of hours.",
       context:
-        "A fictional organisation had never practised a device-loss scenario. Avery ran a short tabletop with the people who would really be involved.",
+        "A fictional organization had never practiced a device-loss scenario. Avery ran a short tabletop with the people who would really be involved.",
       approach: [
         "Wrote a realistic scenario with three timed injects",
         "Asked participants to talk through actions rather than ideal answers",
@@ -190,7 +190,7 @@ export const content: PortfolioContent = {
     },
     {
       title: "Writing for non-specialists",
-      detail: "Practising short explanations of risk that a product manager can act on in one read.",
+      detail: "Practicing short explanations of risk that a product manager can act on in one read.",
     },
   ],
 

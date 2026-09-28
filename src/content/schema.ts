@@ -1,9 +1,10 @@
 /**
  * Content contract for Defensive Signal.
  *
- * Every word a visitor reads on Home, Profile, and Work comes from one object that
- * satisfies `PortfolioContent`. Replace `profile.ts` with your own facts and the
- * whole site re-renders at build time. Nothing here is fetched at runtime.
+ * All profile and case-note content on Home, Profile, and Work comes from one
+ * object that satisfies `PortfolioContent`. Interface labels such as headings and
+ * buttons are in `src/render/pages.ts`. Replace `profile.ts` with your own facts
+ * and the site re-renders at build time. Nothing here is fetched at runtime.
  */
 
 /** A short identifier used in URLs (`/work/?area=…`) and element ids. */
@@ -56,7 +57,7 @@ export interface CaseNote {
   readonly approach: readonly string[];
   /** Qualitative result. Do not invent numbers you cannot evidence. */
   readonly result: string;
-  /** What you would check or improve next. Shows judgement without overclaiming. */
+  /** What you would check or improve next. Shows judgment without overclaiming. */
   readonly nextQuestions: readonly string[];
 }
 

@@ -37,7 +37,7 @@ const artwork = `
     </picture>
   </div>
   <figcaption class="plate__caption">
-    <span>Original abstract artwork: contour lines around a quiet centre.</span>
+    <span>Original abstract artwork: contour lines around a quiet center.</span>
     <button class="plate__toggle" type="button" aria-pressed="false" data-motion-toggle hidden>Pause motion</button>
   </figcaption>
 </figure>`;
@@ -48,7 +48,7 @@ const home = (c: PortfolioContent): PageSpec => {
     route: "home",
     path: "/",
     title: `${c.person.name} — ${c.site.siteName}${c.site.demonstration ? " demo" : ""}`,
-    description: `${c.person.name}, ${c.person.role}: principles, practice areas, and case notes from a security portfolio.`,
+    description: `Security portfolio of ${c.person.name}: working principles, practice areas, and case notes.`,
     main: join([
       `<section class="lede" aria-labelledby="lede-title">
   <div class="lede__text">
@@ -129,7 +129,7 @@ const profile = (c: PortfolioContent): PageSpec => ({
   route: "profile",
   path: "/profile/",
   title: `Profile · ${c.person.name}`,
-  description: `Practice areas, working principles, and learning notes for ${c.person.name}, ${c.person.role}.`,
+  description: `Profile of ${c.person.name}: introduction, practice areas, learning notes, and contact details.`,
   main: `
 <header class="page-head">
   <p class="kicker">Profile</p>

@@ -1,13 +1,16 @@
 # Notice
 
-Defensive Signal — Accessible Cybersecurity Portfolio Starter
-Copyright (c) 2026 Nitheesh Chanambatla, trading as ASTRAYAN Web Studio
+**Defensive Signal — Accessible Cybersecurity Portfolio Starter**
+
+Copyright (c) 2026 Nitheesh Chanambatla, trading as ASTRAYAN Web Studio.
 
 ## What the MIT License covers
 
 The MIT License in [`LICENSE`](LICENSE) applies to the reusable source code and
 tooling in this repository: the TypeScript, CSS, HTML templates, build
-configuration, scripts, and workflow files.
+configuration, scripts, and workflow files. It does not extend to the material
+listed in the next section, even where that material appears inside a source
+file.
 
 ## What it does not cover
 
@@ -15,13 +18,15 @@ The MIT License does **not** grant any right to use the following, unless a file
 explicitly says otherwise:
 
 - the names **Defensive Signal** and **ASTRAYAN Web Studio**, and any logos,
-  wordmarks, or trade dress associated with them;
+  wordmarks, or trade dress associated with them, including the wordmark symbol
+  drawn in `src/render/layout.ts`;
 - trademarks of any third party mentioned in the documentation;
 - the demonstration identity "Avery Example" and all demonstration content in
   `src/content/profile.ts`, which is fictional and provided only so the starter
   renders something meaningful;
-- the artwork in `public/artwork/` and `public/favicon.svg`, and the output of
-  `scripts/generate-artwork.mjs`;
+- the artwork in `public/artwork/` and `public/favicon.svg`, and any artwork
+  produced by `scripts/generate-artwork.mjs` (the script itself is code and is
+  covered by the MIT License);
 - any portrait, photograph, or likeness. This repository contains none, and you
   must not add one you do not have permission to publish.
 
@@ -33,7 +38,7 @@ locally. Replace them with your own before publishing a site built from it.
 Avery Example is not a real person. Every profile detail, case note, and
 scenario in this repository is invented. Contact details use the reserved
 `example.invalid` domain (RFC 2606), which cannot receive mail or resolve. Any
-resemblance to a real person or organisation is coincidental.
+resemblance to a real person or organization is coincidental.
 
 ## Third-party software
 

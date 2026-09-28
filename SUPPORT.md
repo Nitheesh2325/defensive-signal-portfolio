@@ -1,7 +1,8 @@
 # Support
 
-Defensive Signal is provided as-is under the MIT License, maintained on a
-best-effort basis.
+Defensive Signal is provided as is, without warranty, under the MIT License. It
+is maintained on a best-effort basis, and no response time or fix is
+guaranteed.
 
 ## Getting help
 

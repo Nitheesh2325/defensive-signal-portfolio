@@ -20,8 +20,9 @@
 //
 // Matching is case-insensitive. `allow` lists files where a term is expected.
 //
-// Findings name the location (file and line, or commit/blob/path for history)
-// and never print a denylisted term. Other matches are shown masked.
+// Findings name the location (file and line, or commit/blob/path for history).
+// A matched denylisted term is printed as [redacted] and other matches are
+// masked, but locations show file paths as they are, so keep reports private.
 
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";

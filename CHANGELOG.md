@@ -5,6 +5,17 @@ project uses semantic versioning.
 
 ## [Unreleased]
 
+### Changed
+
+- Public text now uses US English consistently. The package description now
+  says "runtime-dependency-free" instead of "dependency-free", matching the
+  README; development dependencies are listed in NOTICE.md.
+- README, NOTICE, SECURITY, SUPPORT, CONTRIBUTING, and the Code of Conduct state
+  the license boundaries, warranty, and best-effort response expectations more
+  precisely, and no longer promise outcomes the project cannot guarantee.
+- The accessibility guide describes WCAG 2.2 AA as a design goal rather than a
+  conformance claim, and states keyboard and target-size behavior precisely.
+
 ### Fixed
 
 - `privacy-scan --history` now scans the contents of every blob reachable in
@@ -33,7 +44,7 @@ project uses semantic versioning.
 - Original generated contour artwork with light and dark variants, a CSS
   stand-in if it fails to load, and an optional bounded Canvas sweep with a
   pause control.
-- Light and dark themes, reduced-motion, forced-colours, and print styles.
+- Light and dark themes, reduced-motion, forced-colors, and print styles.
 - Site audit and identity/privacy scan scripts.
 - CI workflow with a read-only token and SHA-pinned actions.
 - Contribution, conduct, security, support, and notice documents.

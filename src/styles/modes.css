@@ -28,7 +28,7 @@
   }
 }
 
-/* ------------------------------------------------------- forced colours */
+/* ------------------------------------------------------- forced colors */
 @media (forced-colors: active) {
   .plate__sweep {
     display: none;

@@ -1,23 +1,26 @@
 # Accessibility
 
-Defensive Signal targets WCAG 2.2 AA. Automated audits catch structural
-mistakes, but most of these commitments need checking by hand after any
-significant change.
+Defensive Signal is designed to meet WCAG 2.2 level AA. This is a design goal,
+not a certified conformance claim: the starter has not had an independent
+accessibility audit. Automated audits catch structural mistakes, but most of
+these commitments need checking by hand after any significant change.
 
 ## Commitments
 
 **Structure**
 - A skip link is the first focusable element and moves focus to `<main>`.
 - One `h1` per page and a heading order without gaps.
-- Landmarks: notice (`aside`), `header`, `nav` labelled “Primary”, `main`,
+- Landmarks: notice (`aside`), `header`, `nav` labeled “Primary”, `main`,
   and `footer`. Pages with a table of contents label it as a second `nav`.
 - The current route is marked with `aria-current="page"`.
 
 **Keyboard and pointer**
-- Every link and button is reachable with Tab and operable with Enter or Space.
+- Every link and button is reachable with Tab. Links activate with Enter;
+  buttons activate with Enter or Space.
 - Focus is always visible: a 3px ring with offset, drawn in the system
-  highlight colour under forced colours.
-- Interactive targets are at least 44 by 44 CSS pixels.
+  highlight color under forced colors.
+- Standalone controls (navigation, buttons, filter chips, and contact links)
+  are at least 44 CSS pixels tall. Links inside running text are exempt.
 - Nothing depends on hover.
 
 **Filter**
@@ -30,13 +33,13 @@ significant change.
 **Motion**
 - The only animation is the artwork sweep. It never starts under reduced
   motion, stops when offscreen or hidden, and has a **Pause motion** button
-  (WCAG 2.2.2).
+  (WCAG success criterion 2.2.2, Pause, Stop, Hide).
 
 **Visual**
 - Text reflows without horizontal scrolling at 320 CSS pixels and at 400% zoom.
 - Light and dark themes follow the system setting.
-- Forced-colours mode removes decorative backgrounds and the Canvas, and uses
-  system colours for current, pressed, and focus states.
+- Forced-colors mode removes decorative backgrounds and the Canvas, and uses
+  system colors for current, pressed, and focus states.
 - The artwork is decorative (`alt=""`). If it fails, a CSS stand-in appears.
 
 ## Contrast
@@ -65,7 +68,7 @@ If you change `tokens.css`, re-measure every pair above.
       filter status are announced sensibly.
 - [ ] 320 CSS pixels wide and 400% zoom: no horizontal scrolling or clipped text.
 - [ ] Reduced motion on: no sweep, no pause button.
-- [ ] Forced colours (for example Windows Contrast themes): everything readable,
+- [ ] Forced colors (for example Windows Contrast themes): everything readable,
       current and pressed states visible.
 - [ ] JavaScript off: all content present, filter hidden, no broken controls.
 - [ ] Artwork blocked: the plate shows the CSS stand-in, layout unchanged.

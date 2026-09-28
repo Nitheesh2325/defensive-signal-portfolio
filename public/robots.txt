@@ -1,4 +1,4 @@
-# Demonstration build: pages also carry <meta name="robots" content="noindex">.
+# Demonstration build: pages also carry <meta name="robots" content="noindex, nofollow">.
 # After replacing the demo content, set site.indexable in src/content/profile.ts.
 User-agent: *
 Allow: /

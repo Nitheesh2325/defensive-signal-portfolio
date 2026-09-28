@@ -4,7 +4,7 @@
  * 1. Artwork failure: if the SVG cannot load, the plate switches to a CSS stand-in.
  * 2. Sweep: a slow rotating line with a fading trail, drawn on a Canvas above the
  *    artwork. It is decorative and bounded:
- *    - never starts under reduced motion or forced colours;
+ *    - never starts under reduced motion or forced colors;
  *    - runs only while the plate is on screen, the tab is visible, and the visitor
  *      has not pressed "Pause motion";
  *    - is capped at 30 frames per second, device pixel ratio 2, and 1 megapixel of
@@ -64,14 +64,14 @@ function initSweep(plate: HTMLElement): void {
   let lastDraw = 0;
   let angle = -Math.PI / 2;
   let lastTime = 0;
-  let colour = "#a83d18";
+  let color = "#a83d18";
   let mounted = false;
 
   const allowed = (): boolean => !reducedMotion && !forcedColors;
   const shouldRun = (): boolean => allowed() && onScreen && !paused && document.visibilityState === "visible";
 
-  const readColour = (): void => {
-    colour = getComputedStyle(plate).getPropertyValue("--accent").trim() || colour;
+  const readColor = (): void => {
+    color = getComputedStyle(plate).getPropertyValue("--accent").trim() || color;
   };
 
   const resize = (): void => {
@@ -95,7 +95,7 @@ function initSweep(plate: HTMLElement): void {
       const a = angle - (i / TRAIL_STEPS) * TRAIL_RADIANS;
       const alpha = i === 0 ? 0.75 : 0.18 * (1 - i / TRAIL_STEPS) ** 2;
       g.globalAlpha = alpha;
-      g.strokeStyle = colour;
+      g.strokeStyle = color;
       g.lineWidth = i === 0 ? Math.max(1.5, w / 400) : Math.max(1, w / 90);
       g.beginPath();
       g.moveTo(cx, cy);
@@ -135,7 +135,7 @@ function initSweep(plate: HTMLElement): void {
     mounted = true;
     stage.append(canvas);
     toggle.hidden = false;
-    readColour();
+    readColor();
     resize();
   };
 
@@ -180,7 +180,7 @@ function initSweep(plate: HTMLElement): void {
     applyPreferences();
   });
   const stopScheme = watchMedia("(prefers-color-scheme: dark)", () => {
-    readColour();
+    readColor();
     if (mounted) draw();
   });
 

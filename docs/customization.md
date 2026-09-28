@@ -1,4 +1,4 @@
-# Privacy-safe customisation
+# Privacy-safe customization
 
 This guide takes you from the fictional demonstration to your own published
 portfolio without leaking anything you did not mean to publish.
@@ -17,7 +17,7 @@ Edit `src/content/profile.ts`. The compiler checks it against
 - **work** — case notes. Describe context, approach, and result in words. Leave
   out employer names, client names, system names, and numbers unless you have
   permission and can evidence them.
-- **learning** — what you study or practise.
+- **learning** — what you study or practice.
 
 When nothing fictional remains, set `site.demonstration` to `false`. The notice
 strip and the "Fictional scenario" labels disappear.
@@ -33,7 +33,7 @@ Demonstration builds are `noindex, nofollow`. When you are ready:
 
 ## 3. Artwork and images
 
-- Keep the generated contour artwork, change its colours or seed in
+- Keep the generated contour artwork, change its colors or seed in
   `scripts/generate-artwork.mjs`, or replace it with your own original work.
 - Do not publish a photograph of anyone without their permission.
 - Strip metadata from any raster image you add. The privacy scan fails on EXIF
@@ -45,8 +45,8 @@ Demonstration builds are `noindex, nofollow`. When you are ready:
 
 The privacy scan works at two levels:
 
-- **Generic rules, everywhere.** CI runs the public-safe scan on every push and
-  pull request: real-looking email addresses, phone numbers, local file paths,
+- **Generic rules, everywhere.** CI runs the public-safe scan on pushes to
+  `main` and on pull requests: real-looking email addresses, phone numbers, local file paths,
   API keys, private keys, long hex digests, source maps, hosts that are not on
   the allow list, and image metadata. CI never sees your private identifiers.
 - **Your private denylist, locally.** Before you publish, run the scan on your
@@ -61,7 +61,7 @@ protecting is itself private.
 
 ```json
 {
-  "terms": ["Your Employer Ltd", "internal-hostname", "your.personal.address"],
+  "terms": ["Your Name", "Your Employer Ltd", "internal-hostname", "your.personal.address"],
   "allow": { "Your Name": ["LICENSE"] }
 }
 ```
@@ -88,7 +88,9 @@ Deleting a leaked file in a new commit does not remove it from history; if the
 scan finds one, rewrite the history before the repository is ever pushed.
 GitHub no-reply author addresses are permitted. Findings name the commit, blob,
 and path (the exact path for denylist findings, a representative one for
-generic findings), and never print a denylisted term.
+generic findings). A matched denylisted term is always printed as
+`[redacted]`, but locations show file paths as they are, so a path that itself
+contains a denylisted term appears in the report. Keep the report private.
 
 If history cannot be read completely (for example a shallow clone), the scan
 fails rather than passing on partial evidence.

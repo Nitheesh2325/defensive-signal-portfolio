@@ -5,8 +5,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        Defensive Signal stays small, accessible, private by default, and free of runtime dependencies.
-        Proposals that add tracking, third-party requests, or proficiency scores will be declined.
+        Defensive Signal aims to stay small, accessible, private by default, and free of runtime dependencies.
+        Proposals that add tracking, third-party requests, or proficiency scores are outside the project's scope.
   - type: textarea
     id: problem
     attributes:

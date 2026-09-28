@@ -42,7 +42,7 @@ npm run check
 npm audit
 ```
 
-and check your change by hand with a keyboard, at 320 CSS pixels wide, at 200%
+Then check your change by hand with a keyboard, at 320 CSS pixels wide, at 200%
 zoom, with reduced motion enabled, and with JavaScript disabled. Say in the pull
 request which of these you tested and which you did not.
 
@@ -50,9 +50,11 @@ request which of these you tested and which you did not.
 
 - Keep each pull request focused on one change.
 - Describe what a visitor or maintainer will notice, and how you tested it.
-- Update documentation and `CHANGELOG.md` when behaviour changes.
+- Update documentation and `CHANGELOG.md` when behavior changes.
 - Regenerate artwork with `node scripts/generate-artwork.mjs` rather than
   editing the SVG by hand.
 
-By contributing, you agree that your code contributions are licensed under the
-MIT License in this repository.
+By contributing, you confirm that you have the right to submit your
+contribution, and you agree that your code contributions are licensed under
+the MIT License in this repository. Do not contribute names, logos, artwork, or
+personal content that you do not have permission to license.

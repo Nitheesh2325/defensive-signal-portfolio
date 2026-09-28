@@ -39,7 +39,7 @@ delete gitEnv.DS_PRIVACY_DENYLIST;
 
 const denylist = join(workspace, "denylist.json");
 writeFileSync(denylist, JSON.stringify({ terms: [CANARY_NAME] }));
-// The same term, expected only in the licence files.
+// The same term, expected only in the license files.
 const denylistWithAllow = join(workspace, "denylist-allow.json");
 writeFileSync(denylistWithAllow, JSON.stringify({ terms: [CANARY_NAME], allow: { [CANARY_NAME]: ["LICENSE", "legal/LICENSE"] } }));
 
@@ -153,7 +153,7 @@ try {
     const repo = makeRepo("mixed-paths");
     repo.write("LICENSE", credit);
     repo.write("notes.md", credit);
-    repo.commit("Add licence and notes");
+    repo.commit("Add license and notes");
     repo.remove("notes.md");
     repo.commit("Remove notes");
     const result = scan(repo.dir, { list: denylistWithAllow });
@@ -171,7 +171,7 @@ try {
     const repo = makeRepo("allowed-paths");
     repo.write("LICENSE", credit);
     repo.write("legal/LICENSE", credit);
-    repo.commit("Add licences");
+    repo.commit("Add licenses");
     const result = scan(repo.dir, { list: denylistWithAllow });
     check("identical content only under allowlisted paths passes", result.status === 0, result.output);
   }
@@ -179,9 +179,9 @@ try {
     // Moved from an allowlisted path to a non-allowlisted one, then deleted.
     const repo = makeRepo("renamed-out-of-allow");
     repo.write("LICENSE", credit);
-    repo.commit("Add licence");
+    repo.commit("Add license");
     repo.rename("LICENSE", "credits.md");
-    repo.commit("Move licence text");
+    repo.commit("Move license text");
     repo.remove("credits.md");
     repo.commit("Remove credits");
     const current = scan(repo.dir, { list: denylistWithAllow, history: false });

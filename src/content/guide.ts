@@ -26,7 +26,7 @@ export const guide: readonly GuideSection[] = [
     id: "replace",
     title: "Replace the demonstration identity",
     paragraphs: [
-      "All visitor-facing words for Home, Profile, and Work live in one typed module, src/content/profile.ts. The compiler checks your edits against src/content/schema.ts.",
+      "All profile and case-note content for Home, Profile, and Work lives in one typed module, src/content/profile.ts. The compiler checks your edits against src/content/schema.ts. Interface labels such as headings and buttons are in src/render/pages.ts.",
     ],
     steps: [
       "Rewrite the person, contact, practice, work, and learning entries with facts you can support.",
@@ -56,21 +56,21 @@ export const guide: readonly GuideSection[] = [
     id: "accessibility",
     title: "Accessibility commitments",
     paragraphs: [
-      "Keep these properties when you customise the design. They are tested by hand, so re-check them after significant changes.",
+      "Keep these properties when you customize the design. Automated checks cannot confirm all of them, so re-check them by hand after significant changes.",
     ],
     steps: [
       "A skip link, one h1 per page, and landmarks for header, navigation, main, and footer.",
       "Every control reachable and operable by keyboard, with a clearly visible focus ring.",
       "Text reflows without horizontal scrolling at 320 CSS pixels and at 400% zoom.",
-      "Reduced-motion and forced-colours modes are respected, and nothing depends on hover.",
+      "Reduced-motion and forced-colors modes are respected, and nothing depends on hover.",
     ],
   },
   {
     id: "privacy",
     title: "Privacy check before publishing",
     paragraphs: [
-      "Run npm run check. It builds the site, audits the output, and scans for contact details outside the reserved example domain, local file paths, source maps, and secret-like strings. CI runs the same generic scan.",
-      "Before publishing, add identifiers you must never publish to a local .privacy-denylist.json file and run the scan with --history. It also reads every unique file content in Git history, including content from deleted files. The denylist is ignored by Git and must never be committed.",
+      "Run npm run check. It builds the site, audits the output, and scans for contact details outside the reserved example domains, local file paths, source maps, and secret-like strings. CI runs the same generic scan.",
+      "Before publishing, add identifiers you must never publish to a local .privacy-denylist.json file and run the scan with --history. With that option, the scan also reads every unique file content in Git history, including content from deleted files. The denylist file is ignored by Git and must never be committed.",
     ],
     code: "npm run check\nnpm run audit:privacy -- --history",
   },
@@ -78,7 +78,7 @@ export const guide: readonly GuideSection[] = [
     id: "deploy",
     title: "Deploy anywhere static",
     paragraphs: [
-      "The dist/ folder is a static site. Any host that serves files can publish it. docs/deployment.md lists the response headers worth configuring on your host.",
+      "The dist/ folder is a static site. Any host that serves static files over HTTPS can publish it. The file docs/deployment.md in the repository lists the response headers worth configuring on your host.",
     ],
   },
 ];

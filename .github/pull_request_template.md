@@ -14,7 +14,7 @@
 - [ ] 320 CSS pixels wide and 200% zoom
 - [ ] Reduced motion
 - [ ] JavaScript disabled
-- [ ] Forced colours
+- [ ] Forced colors
 
 <!-- List anything you could not test (for example a screen reader or a real phone). -->
 
@@ -22,4 +22,4 @@
 
 - [ ] No real personal data, likeness, or secrets were added.
 - [ ] No runtime dependency, tracker, or third-party request was added.
-- [ ] Documentation and `CHANGELOG.md` are updated where behaviour changed.
+- [ ] Documentation and `CHANGELOG.md` are updated where behavior changed.
