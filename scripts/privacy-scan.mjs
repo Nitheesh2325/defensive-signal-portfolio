@@ -1,0 +1,168 @@
+// Identity and privacy scan.
+//
+//   npm run audit:privacy                 # repository files + dist/ if present
+//   npm run audit:privacy -- --history    # also every commit message and author
+//
+// Generic rules catch real-looking contact details, local file paths, secrets,
+// long hashes, source maps, unknown external hosts, and image metadata.
+//
+// Identifiers that must never be published (your real name, a client's name, a
+// private domain) go in a local denylist that is NOT committed:
+//
+//   .privacy-denylist.json                      (ignored by Git)
+//   or DS_PRIVACY_DENYLIST=/path/to/list.json   (kept anywhere outside the repo)
+//
+//   { "terms": ["Private Name", "private.example"],
+//     "allow": { "Private Name": ["LICENSE"] } }
+//
+// Matching is case-insensitive. `allow` lists files where a term is expected.
+
+import { execFileSync } from "node:child_process";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { dirname, extname, join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+const withHistory = process.argv.includes("--history");
+const findings = [];
+const report = (where, rule, sample) => findings.push({ where, rule, sample: String(sample).slice(0, 80) });
+
+/* ------------------------------------------------------------ file list */
+const SKIP_DIRS = new Set(["node_modules", ".git", "dist"]);
+const walk = (dir) =>
+  readdirSync(dir).flatMap((name) => {
+    const path = join(dir, name);
+    if (statSync(path).isDirectory()) return SKIP_DIRS.has(name) ? [] : walk(path);
+    return [path];
+  });
+
+const inGit = existsSync(join(root, ".git"));
+const git = (...args) => execFileSync("git", args, { cwd: root, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+
+let sourceFiles;
+if (inGit) {
+  sourceFiles = git("ls-files", "-z", "--cached", "--others", "--exclude-standard")
+    .split("\0")
+    .filter(Boolean)
+    .map((f) => join(root, f));
+} else {
+  sourceFiles = walk(root).filter((f) => !/[\\/]\.privacy-denylist\.json$/.test(f));
+}
+const distDir = join(root, "dist");
+const distFiles = existsSync(distDir) ? walk(distDir) : [];
+const allFiles = [...new Set([...sourceFiles, ...distFiles])].filter((f) => existsSync(f));
+const rel = (f) => relative(root, f).split("\\").join("/");
+
+/* ------------------------------------------------------------- denylist */
+const denylistPath = process.env.DS_PRIVACY_DENYLIST || join(root, ".privacy-denylist.json");
+let terms = [];
+let allow = {};
+if (existsSync(denylistPath)) {
+  const parsed = JSON.parse(readFileSync(denylistPath, "utf8"));
+  terms = (parsed.terms ?? []).filter((t) => typeof t === "string" && t.trim().length > 1);
+  allow = parsed.allow ?? {};
+  console.log(`Denylist loaded: ${terms.length} term(s).`);
+} else {
+  console.log("No denylist found. Generic rules only (see the header of this script).");
+}
+
+/* --------------------------------------------------------- generic rules */
+const ALLOWED_HOSTS = [
+  /^([a-z0-9-]+\.)*example\.invalid$/,
+  /^([a-z0-9-]+\.)*example\.(com|org|net)$/,
+  /^portfolio\.example$/,
+  /^(localhost|127\.0\.0\.1)$/,
+  /^www\.w3\.org$/,
+  /^registry\.npmjs\.org$/,
+];
+const ALLOWED_EMAIL = /@(([a-z0-9-]+\.)*example\.(invalid|com|org|net))$/i;
+
+const RULES = [
+  { name: "email address outside reserved example domains", re: /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, keep: (m) => !ALLOWED_EMAIL.test(m) },
+  { name: "phone number", re: /(?<![\w.])\+?(?:\d{1,3}[\s.-])?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}(?!\w)/g },
+  { name: "local file path", re: /\b[A-Za-z]:[\\/](?:Users|Documents and Settings)[\\/]|(?<![\w.])\/(?:home|Users)\/[A-Za-z0-9._-]+\//g },
+  { name: "private key", re: /-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----/g },
+  { name: "cloud or API token", re: /\b(?:AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{20,}|xox[abprs]-[A-Za-z0-9-]{10,}|AIza[0-9A-Za-z_-]{35}|sk-[A-Za-z0-9]{32,})\b/g },
+  { name: "long hex digest (possible source hash)", re: /\b[a-f0-9]{64,}\b/gi },
+  { name: "source map reference", re: /sourceMappingURL\s*=/g },
+  {
+    name: "external host not on the allow list",
+    re: /https?:\/\/([a-z0-9.-]+)/gi,
+    keep: (_m, host) => !ALLOWED_HOSTS.some((re) => re.test(host.toLowerCase())),
+  },
+];
+
+const TEXT_EXT = new Set([
+  "", ".md", ".txt", ".json", ".yml", ".yaml", ".html", ".css", ".js", ".mjs", ".ts", ".svg", ".xml",
+  ".gitignore", ".gitattributes", ".editorconfig", ".nvmrc",
+]);
+const IMAGE_EXT = new Set([".png", ".jpg", ".jpeg", ".webp", ".avif", ".gif", ".ico"]);
+
+const scanText = (where, text, { lockfile = false } = {}) => {
+  const lines = text.split(/\r?\n/);
+  lines.forEach((line, i) => {
+    const at = `${where}:${i + 1}`;
+    for (const rule of RULES) {
+      // The lockfile carries upstream package metadata (integrity digests, funding
+      // links). It is generated by npm, not written by hand, so those rules skip it.
+      if (lockfile && (rule.name.startsWith("long hex") || rule.name.startsWith("external host"))) continue;
+      for (const m of line.matchAll(rule.re)) {
+        if (!rule.keep || rule.keep(m[0], m[1])) report(at, rule.name, m[0]);
+      }
+    }
+    const lower = line.toLowerCase();
+    for (const term of terms) {
+      if (!lower.includes(term.toLowerCase())) continue;
+      const allowedIn = allow[term] ?? [];
+      const file = where.split(":")[0];
+      if (!allowedIn.includes(file)) report(at, "denylisted identifier", "[redacted]");
+    }
+  });
+};
+
+for (const file of allFiles) {
+  const name = rel(file);
+  const ext = extname(file).toLowerCase();
+  for (const term of terms) {
+    if (name.toLowerCase().includes(term.toLowerCase())) report(name, "denylisted identifier in file name", "[redacted]");
+  }
+  if (ext === ".map") report(name, "source map file", name);
+  if (IMAGE_EXT.has(ext)) {
+    const bytes = readFileSync(file).toString("latin1");
+    if (/Exif\0\0|<x:xmpmeta|http:\/\/ns\.adobe\.com\/xap/.test(bytes)) report(name, "image metadata (EXIF/XMP)", name);
+    continue;
+  }
+  if (!TEXT_EXT.has(ext) && !/^\.[a-z]+rc$/.test(ext)) continue;
+  scanText(name, readFileSync(file, "utf8"), { lockfile: name === "package-lock.json" });
+}
+
+/* ---------------------------------------------------------- Git history */
+if (withHistory) {
+  if (!inGit) {
+    report("git", "history requested but this folder is not a Git repository", "");
+  } else {
+    const log = git("log", "--all", "--format=%an%n%ae%n%cn%n%ce%n%B%n--end--");
+    const cleaned = log.replace(/[0-9]+\+[A-Za-z0-9-]+@users\.noreply\.github\.com/g, "noreply@example.com");
+    scanText("git-log", cleaned);
+    const objects = git("rev-list", "--all", "--objects")
+      .split("\n")
+      .map((line) => line.slice(41))
+      .filter(Boolean);
+    for (const path of objects) {
+      for (const term of terms) {
+        if (path.toLowerCase().includes(term.toLowerCase())) report(`git-object:${path}`, "denylisted identifier in historic path", "[redacted]");
+      }
+    }
+    const remotes = git("remote").trim();
+    console.log(`History scanned (${objects.length} object paths). Remotes: ${remotes || "none"}.`);
+  }
+}
+
+/* --------------------------------------------------------------- result */
+console.log(`Scanned ${allFiles.length} files${distFiles.length ? ` (including ${distFiles.length} in dist/)` : ""}.`);
+if (findings.length) {
+  for (const f of findings) console.log(`FAIL  ${f.where}  ${f.rule}: ${f.sample}`);
+  console.log(`\n${findings.length} finding(s).`);
+  process.exit(1);
+}
+console.log("PASS  no identity or privacy findings.");
