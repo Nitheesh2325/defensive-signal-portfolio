@@ -1,0 +1,25 @@
+{
+  "name": "defensive-signal-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Defensive Signal — an accessible, dependency-free cybersecurity portfolio starter with fictional demonstration content.",
+  "license": "MIT",
+  "author": "ASTRAYAN Web Studio",
+  "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "audit:site": "node scripts/audit-site.mjs",
+    "audit:privacy": "node scripts/privacy-scan.mjs",
+    "check": "npm run build && npm run audit:site && npm run audit:privacy"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vite": "8.2.2"
+  }
+}

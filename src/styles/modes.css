@@ -1,0 +1,88 @@
+/* ------------------------------------------------------ reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  /* The sweep never starts under reduced motion; this is a second guard. */
+  .plate__sweep {
+    display: none;
+  }
+}
+
+/* Subtle interaction feedback only when motion is welcome. */
+@media (prefers-reduced-motion: no-preference) {
+  .button,
+  .chip,
+  .routes__link,
+  .area-link,
+  .plate__toggle {
+    transition:
+      background-color 140ms ease-out,
+      border-color 140ms ease-out,
+      color 140ms ease-out;
+  }
+}
+
+/* ------------------------------------------------------- forced colours */
+@media (forced-colors: active) {
+  .plate__sweep {
+    display: none;
+  }
+
+  .plate__stage {
+    background: Canvas;
+    border-color: CanvasText;
+  }
+
+  .routes__link[aria-current="page"],
+  .chip[aria-pressed="true"],
+  .plate__toggle[aria-pressed="true"] {
+    background: Highlight;
+    color: HighlightText;
+    forced-color-adjust: none;
+  }
+
+  .ledger__item,
+  .note-card,
+  .case,
+  .toc,
+  .area-link,
+  .demo-note__tag,
+  .tag,
+  .case__flag {
+    border: 1px solid CanvasText;
+  }
+
+  .button,
+  .chip,
+  .plate__toggle {
+    border-color: ButtonText;
+  }
+
+  :focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+/* ---------------------------------------------------------------- print */
+@media print {
+  .demo-note,
+  .routes,
+  .plate,
+  .filter,
+  .skip-link {
+    display: none !important;
+  }
+
+  .case,
+  .ledger__item,
+  .note-card {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+}

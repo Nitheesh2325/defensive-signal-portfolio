@@ -1,0 +1,20 @@
+# Dependencies and build output
+node_modules/
+dist/
+*.tsbuildinfo
+vite.config.ts.timestamp-*
+
+# Local environment and secrets (this starter needs none)
+.env
+.env.*
+
+# Private identity denylist for the privacy scanner — keep it outside Git
+.privacy-denylist.json
+
+# Editor, OS, and log noise
+.DS_Store
+Thumbs.db
+*.log
+.vscode/*
+!.vscode/extensions.json
+.idea/
