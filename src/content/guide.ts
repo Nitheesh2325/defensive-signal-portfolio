@@ -69,10 +69,10 @@ export const guide: readonly GuideSection[] = [
     id: "privacy",
     title: "Privacy check before publishing",
     paragraphs: [
-      "Run npm run check. It builds the site, audits the output, and scans for contact details outside the reserved example domain, local file paths, source maps, and secret-like strings.",
-      "Add identifiers you must never publish to a local .privacy-denylist.json file. It is ignored by Git, so the list itself stays private.",
+      "Run npm run check. It builds the site, audits the output, and scans for contact details outside the reserved example domain, local file paths, source maps, and secret-like strings. CI runs the same generic scan.",
+      "Before publishing, add identifiers you must never publish to a local .privacy-denylist.json file and run the scan with --history. It also reads every file ever committed, including deleted ones. The denylist is ignored by Git and must never be committed.",
     ],
-    code: "npm run check",
+    code: "npm run check\nnpm run audit:privacy -- --history",
   },
   {
     id: "deploy",

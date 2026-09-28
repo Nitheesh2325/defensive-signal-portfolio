@@ -87,4 +87,5 @@ The sweep is the only animation. It:
 | Script | Checks |
 | --- | --- |
 | `scripts/audit-site.mjs` | Routes, landmarks, one `h1`, titles, descriptions, robots, CSP, inline code, external resources, internal links and anchors, network and storage APIs, SVG safety, size budgets |
-| `scripts/privacy-scan.mjs` | Non-example emails, phone numbers, local paths, keys and tokens, long digests, source maps, unknown hosts, image metadata, a private denylist, and optionally Git history |
+| `scripts/privacy-scan.mjs` | Non-example emails, phone numbers, local paths, keys and tokens, long digests, source maps, unknown hosts, image metadata, and an optional private denylist. With `--history`: commit messages, authors, every historic path, and the contents of every reachable blob, including deleted files; fails closed if history cannot be read |
+| `scripts/test-privacy-scan.mjs` | Regression test in disposable Git repositories: deleted denylisted and secret canaries must fail, clean history must pass, GitHub no-reply authors stay permitted |

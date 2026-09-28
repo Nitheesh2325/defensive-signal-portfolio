@@ -1,7 +1,10 @@
 // Identity and privacy scan.
 //
 //   npm run audit:privacy                 # repository files + dist/ if present
-//   npm run audit:privacy -- --history    # also every commit message and author
+//   npm run audit:privacy -- --history    # also everything reachable in Git history:
+//                                         # commit messages and authors, every path, and
+//                                         # the contents of every blob, including files
+//                                         # that were later deleted or renamed
 //
 // Generic rules catch real-looking contact details, local file paths, secrets,
 // long hashes, source maps, unknown external hosts, and image metadata.
@@ -16,6 +19,9 @@
 //     "allow": { "Private Name": ["LICENSE"] } }
 //
 // Matching is case-insensitive. `allow` lists files where a term is expected.
+//
+// Findings name the location (file and line, or commit/blob/path for history)
+// and never print a denylisted term. Other matches are shown masked.
 
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
@@ -25,7 +31,14 @@ import { fileURLToPath } from "node:url";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const withHistory = process.argv.includes("--history");
 const findings = [];
-const report = (where, rule, sample) => findings.push({ where, rule, sample: String(sample).slice(0, 80) });
+// Matched text may itself be sensitive (a token, an address), so only a masked
+// hint is printed: the first two characters and the length.
+const mask = (value) => {
+  const text = String(value);
+  if (text === "" || text === "[redacted]") return text;
+  return text.length <= 4 ? "****" : `${text.slice(0, 2)}… (${text.length} chars)`;
+};
+const report = (where, rule, sample) => findings.push({ where, rule, sample: mask(sample) });
 
 /* ------------------------------------------------------------ file list */
 const SKIP_DIRS = new Set(["node_modules", ".git", "dist"]);
@@ -38,6 +51,8 @@ const walk = (dir) =>
 
 const inGit = existsSync(join(root, ".git"));
 const git = (...args) => execFileSync("git", args, { cwd: root, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+const gitBuffer = (args, input, maxBuffer) =>
+  execFileSync("git", args, { cwd: root, input, maxBuffer, stdio: ["pipe", "pipe", "pipe"] });
 
 let sourceFiles;
 if (inGit) {
@@ -97,8 +112,11 @@ const TEXT_EXT = new Set([
   ".gitignore", ".gitattributes", ".editorconfig", ".nvmrc",
 ]);
 const IMAGE_EXT = new Set([".png", ".jpg", ".jpeg", ".webp", ".avif", ".gif", ".ico"]);
+const IMAGE_METADATA = /Exif\0\0|<x:xmpmeta|http:\/\/ns\.adobe\.com\/xap/;
+const isLockfile = (path) => path === "package-lock.json";
 
-const scanText = (where, text, { lockfile = false } = {}) => {
+// `file` is the repository path checked against the denylist `allow` list.
+const scanText = (where, file, text, { lockfile = false } = {}) => {
   const lines = text.split(/\r?\n/);
   lines.forEach((line, i) => {
     const at = `${where}:${i + 1}`;
@@ -114,7 +132,6 @@ const scanText = (where, text, { lockfile = false } = {}) => {
     for (const term of terms) {
       if (!lower.includes(term.toLowerCase())) continue;
       const allowedIn = allow[term] ?? [];
-      const file = where.split(":")[0];
       if (!allowedIn.includes(file)) report(at, "denylisted identifier", "[redacted]");
     }
   });
@@ -129,44 +146,162 @@ for (const file of allFiles) {
   if (ext === ".map") report(name, "source map file", name);
   if (IMAGE_EXT.has(ext)) {
     const bytes = readFileSync(file).toString("latin1");
-    if (/Exif\0\0|<x:xmpmeta|http:\/\/ns\.adobe\.com\/xap/.test(bytes)) report(name, "image metadata (EXIF/XMP)", name);
+    if (IMAGE_METADATA.test(bytes)) report(name, "image metadata (EXIF/XMP)", name);
     continue;
   }
   if (!TEXT_EXT.has(ext) && !/^\.[a-z]+rc$/.test(ext)) continue;
-  scanText(name, readFileSync(file, "utf8"), { lockfile: name === "package-lock.json" });
+  scanText(name, name, readFileSync(file, "utf8"), { lockfile: isLockfile(name) });
 }
 
 /* ---------------------------------------------------------- Git history */
-if (withHistory) {
-  if (!inGit) {
-    report("git", "history requested but this folder is not a Git repository", "");
-  } else {
-    const log = git("log", "--all", "--format=%an%n%ae%n%cn%n%ce%n%B%n--end--");
-    // No-reply addresses in author fields and commit trailers (for example GitHub's
-    // private commit email or a co-author trailer) are non-personal by design.
-    // Names in the same fields are still checked against the denylist.
-    const cleaned = log
-      .replace(/[0-9]+\+[A-Za-z0-9-]+@users\.noreply\.github\.com/g, "noreply@example.com")
-      .replace(/\b[A-Za-z0-9._+-]*no-?reply@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/gi, "noreply@example.com");
-    scanText("git-log", cleaned);
-    const objects = git("rev-list", "--all", "--objects")
-      .split("\n")
-      .map((line) => line.slice(41))
-      .filter(Boolean);
-    for (const path of objects) {
-      for (const term of terms) {
-        if (path.toLowerCase().includes(term.toLowerCase())) report(`git-object:${path}`, "denylisted identifier in historic path", "[redacted]");
+// Limits keep a malformed or unexpectedly large history from exhausting memory.
+// A blob that cannot be scanned within them is a finding, never a silent skip.
+const HISTORY_LIMITS = {
+  blobBytes: 8 * 1024 * 1024,
+  totalBytes: 256 * 1024 * 1024,
+  batchBytes: 32 * 1024 * 1024,
+};
+
+const isBinary = (buffer) => buffer.subarray(0, 8000).includes(0);
+const historyLocation = (commit, id, path) => `history:commit=${commit.slice(0, 12)}:blob=${id.slice(0, 12)}:${path}`;
+
+function scanHistory() {
+  if (git("rev-parse", "--is-shallow-repository").trim() !== "false") {
+    report("history", "shallow clone: fetch the full history before scanning", "");
+    return;
+  }
+
+  // Commit messages and identities. No-reply addresses in author fields and commit
+  // trailers (for example GitHub's private commit email or a co-author trailer)
+  // are non-personal by design. Names in the same fields are still checked
+  // against the denylist.
+  const log = git("log", "--all", "--format=%an%n%ae%n%cn%n%ce%n%B%n--end--");
+  const cleaned = log
+    .replace(/[0-9]+\+[A-Za-z0-9-]+@users\.noreply\.github\.com/g, "noreply@example.com")
+    .replace(/\b[A-Za-z0-9._+-]*no-?reply@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/gi, "noreply@example.com");
+  scanText("git-log", "git-log", cleaned);
+
+  // Every blob reachable from every ref, found by walking the full tree of every
+  // commit, so files that were later deleted or renamed are still included.
+  const commits = git("rev-list", "--all").split("\n").filter(Boolean);
+  const blobs = new Map(); // blob id -> first { commit, path } it was seen at
+  const paths = new Set();
+  for (const commit of commits) {
+    const entries = git("ls-tree", "-r", "-z", "--full-tree", commit).split("\0").filter(Boolean);
+    for (const entry of entries) {
+      const tab = entry.indexOf("\t");
+      if (tab < 0) throw new Error(`unreadable tree entry in commit ${commit}`);
+      const [, type, id] = entry.slice(0, tab).split(" ");
+      const path = entry.slice(tab + 1);
+      if (!type || !id || !path) throw new Error(`unreadable tree entry in commit ${commit}`);
+      paths.add(path);
+      if (type === "blob" && !blobs.has(id)) blobs.set(id, { commit, path });
+    }
+  }
+
+  for (const path of paths) {
+    for (const term of terms) {
+      if (path.toLowerCase().includes(term.toLowerCase())) {
+        report(`history-path:${path}`, "denylisted identifier in historic path", "[redacted]");
       }
     }
-    const remotes = git("remote").trim();
-    console.log(`History scanned (${objects.length} object paths). Remotes: ${remotes || "none"}.`);
+  }
+
+  const ids = [...blobs.keys()];
+  const sizes = new Map();
+  if (ids.length) {
+    const check = gitBuffer(["cat-file", "--batch-check=%(objectname) %(objecttype) %(objectsize)"], `${ids.join("\n")}\n`, 64 * 1024 * 1024)
+      .toString("utf8")
+      .split("\n")
+      .filter(Boolean);
+    for (const line of check) {
+      const [id, type, size] = line.split(" ");
+      if (type !== "blob") throw new Error(`object ${id} is missing or not a blob`);
+      sizes.set(id, Number(size));
+    }
+    if (sizes.size !== ids.length) throw new Error("some historical blobs could not be listed");
+  }
+
+  let total = 0;
+  let batch = [];
+  let batchSize = 0;
+  let binarySkipped = 0;
+
+  const flush = () => {
+    if (!batch.length) return;
+    const out = gitBuffer(["cat-file", "--batch"], `${batch.join("\n")}\n`, batchSize + batch.length * 128 + 1024);
+    let offset = 0;
+    for (const id of batch) {
+      const headerEnd = out.indexOf(10, offset);
+      if (headerEnd < 0) throw new Error(`truncated output reading blob ${id}`);
+      const [gotId, type, size] = out.subarray(offset, headerEnd).toString("utf8").split(" ");
+      const length = Number(size);
+      if (gotId !== id || type !== "blob" || !Number.isFinite(length)) throw new Error(`unexpected output reading blob ${id}`);
+      const content = out.subarray(headerEnd + 1, headerEnd + 1 + length);
+      if (content.length !== length) throw new Error(`truncated content for blob ${id}`);
+      offset = headerEnd + 1 + length + 1;
+
+      const { commit, path } = blobs.get(id);
+      const where = historyLocation(commit, id, path);
+      const ext = extname(path).toLowerCase();
+      if (IMAGE_EXT.has(ext)) {
+        if (IMAGE_METADATA.test(content.toString("latin1"))) report(where, "image metadata (EXIF/XMP)", path);
+        continue;
+      }
+      if (ext === ".map") report(where, "source map file", path);
+      if (isBinary(content)) {
+        binarySkipped++;
+        continue;
+      }
+      scanText(where, path, content.toString("utf8"), { lockfile: isLockfile(path) });
+    }
+    batch = [];
+    batchSize = 0;
+  };
+
+  for (const id of ids) {
+    const size = sizes.get(id);
+    const { commit, path } = blobs.get(id);
+    if (size > HISTORY_LIMITS.blobBytes) {
+      report(historyLocation(commit, id, path), "historical blob too large to scan; review it by hand", "");
+      continue;
+    }
+    if (total + size > HISTORY_LIMITS.totalBytes) {
+      report("history", "history larger than the scan limit; not every blob was inspected", "");
+      break;
+    }
+    total += size;
+    if (batchSize + size > HISTORY_LIMITS.batchBytes) flush();
+    batch.push(id);
+    batchSize += size;
+  }
+  flush();
+
+  const remotes = git("remote").trim();
+  console.log(
+    `History scanned: ${commits.length} commit(s), ${paths.size} path(s), ${ids.length} unique blob(s)` +
+      ` (${(total / 1024).toFixed(0)} KB, ${binarySkipped} binary skipped). Remotes: ${remotes || "none"}.`,
+  );
+}
+
+if (withHistory) {
+  if (!inGit) {
+    report("history", "history requested but this folder is not a Git repository", "");
+  } else {
+    // Fail closed: if any part of the history cannot be read, the scan fails.
+    try {
+      scanHistory();
+    } catch (error) {
+      const reason = String(error?.message ?? error).split("\n")[0];
+      report("history", `Git history could not be inspected completely (${reason})`, "");
+    }
   }
 }
 
 /* --------------------------------------------------------------- result */
 console.log(`Scanned ${allFiles.length} files${distFiles.length ? ` (including ${distFiles.length} in dist/)` : ""}.`);
 if (findings.length) {
-  for (const f of findings) console.log(`FAIL  ${f.where}  ${f.rule}: ${f.sample}`);
+  for (const f of findings) console.log(`FAIL  ${f.where}  ${f.rule}${f.sample ? `: ${f.sample}` : ""}`);
   console.log(`\n${findings.length} finding(s).`);
   process.exit(1);
 }

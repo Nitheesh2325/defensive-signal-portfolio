@@ -43,8 +43,21 @@ Demonstration builds are `noindex, nofollow`. When you are ready:
 
 ## 4. Run the privacy scan with your own denylist
 
-Create `.privacy-denylist.json` in the project root. It is ignored by Git, so the
-list of things you are protecting never becomes part of the repository.
+The privacy scan works at two levels:
+
+- **Generic rules, everywhere.** CI runs the public-safe scan on every push and
+  pull request: real-looking email addresses, phone numbers, local file paths,
+  API keys, private keys, long hex digests, source maps, hosts that are not on
+  the allow list, and image metadata. CI never sees your private identifiers.
+- **Your private denylist, locally.** Before you publish, run the scan on your
+  own machine with a denylist of names, employers, domains, and anything else
+  that must never appear. This local run is the pre-publication release gate;
+  the generic CI scan alone is not enough.
+
+Create `.privacy-denylist.json` in the project root, or keep the file anywhere
+outside the repository and point `DS_PRIVACY_DENYLIST` at it. The default file
+name is ignored by Git. Never commit the denylist: the list of things you are
+protecting is itself private.
 
 ```json
 {
@@ -60,9 +73,16 @@ npm run check
 npm run audit:privacy -- --history
 ```
 
-The scan also looks for real-looking email addresses, phone numbers, local
-file paths, API keys, private keys, long hex digests, source maps, and hosts
-that are not on its allow list.
+With `--history`, the scan reads everything reachable in Git history: commit
+messages and authors, every path, and the contents of every file version ever
+committed, including files that were later deleted or renamed. Deleting a leaked
+file in a new commit does not remove it from history; if the scan finds one,
+rewrite the history before the repository is ever pushed. GitHub no-reply author
+addresses are permitted. Findings name the commit, blob, and path, and never
+print a denylisted term.
+
+If history cannot be read completely (for example a shallow clone), the scan
+fails rather than passing on partial evidence.
 
 ## 5. Keep the promises
 

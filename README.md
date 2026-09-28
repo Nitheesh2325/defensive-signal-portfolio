@@ -1,6 +1,6 @@
 # Defensive Signal — Accessible Cybersecurity Portfolio Starter
 
-Defensive Signal is a small, dependency-free starter for building an honest,
+Defensive Signal is a small, runtime-dependency-free starter for building an honest,
 accessible portfolio for security work. It ships with a clearly labelled
 fictional practitioner, **Avery Example**, so you can see the shape of a
 finished site before replacing every word with your own.
@@ -26,7 +26,8 @@ finished site before replacing every word with your own.
   or network requests** after the page loads. A strict Content Security Policy
   is added to every built page.
 - **Audits you can run locally and in CI**: a site audit of the build output
-  and an identity/privacy scan of the repository, build, and Git history.
+  and an identity/privacy scan of the repository, the build, and every file
+  ever committed to Git history, including deleted ones.
 
 ## Quick start
 
@@ -40,7 +41,7 @@ npm run dev        # http://127.0.0.1:5173
 Build and check everything:
 
 ```sh
-npm run check      # typecheck, build, site audit, privacy scan
+npm run check      # typecheck, build, site audit, privacy test and scan
 npm run preview    # serve dist/ locally
 ```
 
@@ -50,7 +51,8 @@ npm run preview    # serve dist/ locally
 2. Set `site.demonstration` to `false` when no fictional content remains.
 3. Set `site.indexable` and `site.origin` when you are ready for search engines.
 4. Put identifiers you must never publish in a local `.privacy-denylist.json`
-   (ignored by Git) and run `npm run audit:privacy`.
+   (ignored by Git, never committed) and run
+   `npm run audit:privacy -- --history` before publishing.
 5. Deploy the `dist/` folder to any static host.
 
 The full walkthrough is on the Guide route and in

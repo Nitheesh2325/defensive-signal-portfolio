@@ -5,6 +5,19 @@ project uses semantic versioning.
 
 ## [Unreleased]
 
+### Fixed
+
+- `privacy-scan --history` now scans the contents of every blob reachable in
+  Git history, including files that were later deleted or renamed, fails closed
+  when history cannot be read completely, and masks matched values in its
+  report.
+
+### Added
+
+- `npm run test:privacy`, a regression test that runs the history scan against
+  disposable Git repositories with fictional canaries. CI runs it before the
+  privacy scan.
+
 ## [0.1.0] — 2026-09-28
 
 ### Added

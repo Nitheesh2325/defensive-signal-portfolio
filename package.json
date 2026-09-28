@@ -16,7 +16,8 @@
     "preview": "vite preview",
     "audit:site": "node scripts/audit-site.mjs",
     "audit:privacy": "node scripts/privacy-scan.mjs",
-    "check": "npm run build && npm run audit:site && npm run audit:privacy"
+    "test:privacy": "node scripts/test-privacy-scan.mjs",
+    "check": "npm run build && npm run audit:site && npm run test:privacy && npm run audit:privacy"
   },
   "devDependencies": {
     "typescript": "5.9.3",

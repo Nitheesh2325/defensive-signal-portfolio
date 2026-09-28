@@ -43,7 +43,12 @@ jobs:
       - name: Site audit (structure, links, CSP, external requests, budgets)
         run: npm run audit:site
 
-      - name: Identity and privacy scan (files, build output, history)
+      - name: Privacy scanner regression test (history blobs, deleted files)
+        run: npm run test:privacy
+
+      # Generic, public-safe rules only. The private identity denylist is never
+      # available here; it belongs to the local pre-publication gate.
+      - name: Identity and privacy scan (files, build output, full history)
         run: npm run audit:privacy -- --history
 
       - name: Confirm no source maps in the build
