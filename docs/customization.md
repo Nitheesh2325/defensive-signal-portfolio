@@ -77,6 +77,14 @@ The privacy scan works at two levels:
   gate; the generic CI scan alone cannot catch identifiers it does not know
   about.
 
+The host allow list covers reserved example domains, loopback addresses, the
+SVG namespace, and the npm registry. One narrower exception exists: two exact
+URLs, the README's CI status badge and its link, are allowed on `github.com`
+through `ALLOWED_URLS` in `scripts/privacy-scan.mjs`. Only a character-for-
+character match passes, so any other GitHub URL, including other paths in the
+same repository, still fails. If you fork the starter, replace those two URLs
+with your own repository's badge URLs.
+
 Create `.privacy-denylist.json` in the project root, or keep the file anywhere
 outside the repository and point `DS_PRIVACY_DENYLIST` at it. The default file
 name is ignored by Git. Never commit the denylist: the list of things you are

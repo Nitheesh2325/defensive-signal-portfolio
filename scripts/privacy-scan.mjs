@@ -91,6 +91,14 @@ const ALLOWED_HOSTS = [
   /^www\.w3\.org$/,
   /^registry\.npmjs\.org$/,
 ];
+// Exact URLs allowed on hosts that are otherwise blocked. Only a character-for-
+// character match is accepted, so other paths, repositories, or query strings on
+// the same host still fail. These are the README's CI status badge and its link.
+// If you fork the starter, replace them with your own repository's URLs.
+const ALLOWED_URLS = new Set([
+  "https://github.com/Nitheesh2325/defensive-signal-portfolio/actions/workflows/ci.yml/badge.svg?branch=main",
+  "https://github.com/Nitheesh2325/defensive-signal-portfolio/actions/workflows/ci.yml?query=branch%3Amain",
+]);
 const ALLOWED_EMAIL = /@(([a-z0-9-]+\.)*example\.(invalid|com|org|net))$/i;
 
 const RULES = [
@@ -103,8 +111,10 @@ const RULES = [
   { name: "source map reference", re: /sourceMappingURL\s*=/g },
   {
     name: "external host not on the allow list",
-    re: /https?:\/\/([a-z0-9.-]+)/gi,
-    keep: (_m, host) => !ALLOWED_HOSTS.some((re) => re.test(host.toLowerCase())),
+    // Captures the whole URL (up to whitespace, quotes, brackets, or parentheses)
+    // so exact-URL exceptions can be checked; the host decides everything else.
+    re: /https?:\/\/([a-z0-9.-]+)[^\s"'`<>()[\]]*/gi,
+    keep: (url, host) => !ALLOWED_URLS.has(url) && !ALLOWED_HOSTS.some((re) => re.test(host.toLowerCase())),
   },
 ];
 

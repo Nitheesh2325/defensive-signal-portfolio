@@ -1,5 +1,8 @@
 # Defensive Signal — Accessible Cybersecurity Portfolio Starter
 
+[![CI](https://github.com/Nitheesh2325/defensive-signal-portfolio/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Nitheesh2325/defensive-signal-portfolio/actions/workflows/ci.yml?query=branch%3Amain)
+· [MIT License](LICENSE) · Version [0.1.0](CHANGELOG.md)
+
 Defensive Signal is a small, runtime-dependency-free starter for building an
 honest, accessible portfolio for security work. It ships with a clearly labeled
 fictional practitioner, **Avery Example**, so you can see the shape of a
@@ -7,6 +10,18 @@ finished site before replacing the content with your own.
 
 > **Demonstration content.** Avery Example is not a real person. Every case
 > note is invented. Contact details use the reserved `example.invalid` domain.
+
+## Demo
+
+No hosted demo is currently provided. The fictional demonstration runs
+locally. With Node.js 20.19+ or 22.12+ installed:
+
+```sh
+npm ci
+npm run dev
+```
+
+Then open <http://127.0.0.1:5173> in your browser.
 
 ## What you get
 
@@ -30,16 +45,7 @@ finished site before replacing the content with your own.
   and an identity/privacy scan of the repository, the build, and every unique
   file content (blob) in Git history, including content from deleted files.
 
-## Quick start
-
-Requires Node.js 20.19+ or 22.12+.
-
-```sh
-npm ci
-npm run dev        # http://127.0.0.1:5173
-```
-
-Build and check everything:
+## Build and check
 
 ```sh
 npm run check      # typecheck, build, site audit, privacy test and scan

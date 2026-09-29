@@ -3,6 +3,18 @@
 All notable changes to this project are recorded here, newest first. The
 project uses semantic versioning.
 
+## [Unreleased]
+
+### Changed
+
+- README: a metadata row with the official CI status badge and plain links to
+  the license and changelog, a Demo section explaining that no hosted demo is
+  provided and how to run it locally, and a "Build and check" section in place
+  of "Quick start".
+- Privacy scan: two exact URLs, the README CI badge and its link, are allowed
+  on `github.com`. Any other GitHub URL still fails, and the regression test
+  covers both cases.
+
 ## [0.1.0] — 2026-09-28
 
 First public release.

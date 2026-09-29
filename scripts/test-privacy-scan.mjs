@@ -219,6 +219,33 @@ try {
     const result = scan(dir, { withDenylist: false });
     check("--history outside a Git repository fails", result.status === 1, result.output);
   }
+
+  // 8. The README CI badge exception allows only its two exact URLs.
+  {
+    const repoBase = ["https:", "", "github.com", "Nitheesh2325", "defensive-signal-portfolio"].join("/");
+    const badge = `${repoBase}/actions/workflows/ci.yml/badge.svg?branch=main`;
+    const badgeLink = `${repoBase}/actions/workflows/ci.yml?query=branch%3Amain`;
+
+    const allowed = makeRepo("badge-allowed");
+    allowed.write("badge.md", `[![CI](${badge})](${badgeLink})\n`);
+    allowed.commit("Add CI badge");
+    const pass = scan(allowed.dir, { withDenylist: false });
+    check("the exact README CI badge and link are allowed", pass.status === 0, pass.output);
+
+    const unrelated = [
+      ["https:", "", "github.com", "someone-else", "defensive-signal-portfolio", "actions", "workflows", "ci.yml", "badge.svg?branch=main"].join("/"),
+      `${repoBase}/issues`,
+      `${badge}&extra=1`,
+      `${repoBase}/actions/workflows/ci.yml`,
+      ["https:", "", "github.com", ""].join("/"),
+    ];
+    const blocked = makeRepo("badge-unrelated");
+    blocked.write("links.md", `${unrelated.join("\n")}\n`);
+    blocked.commit("Add unrelated GitHub links");
+    const fail = scan(blocked.dir, { withDenylist: false });
+    const flagged = unrelated.every((_, i) => new RegExp(`links\\.md:${i + 1}\\s+external host not on the allow list`).test(fail.output));
+    check("unrelated or altered GitHub URLs still fail", fail.status === 1 && flagged, fail.output);
+  }
 } finally {
   rmSync(workspace, { recursive: true, force: true });
 }
