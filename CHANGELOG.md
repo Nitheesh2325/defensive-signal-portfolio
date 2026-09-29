@@ -3,44 +3,11 @@
 All notable changes to this project are recorded here, newest first. The
 project uses semantic versioning.
 
-## [Unreleased]
-
-### Changed
-
-- Licensing: the MIT License now explicitly covers the source code, tooling,
-  CI workflow, and documentation, including documentation code examples.
-  NOTICE.md lists the excluded names, branding, fictional demonstration
-  content, bundled artwork, and likenesses, which stay excluded inside source
-  and documentation files. The package author now matches the copyright owner
-  named in LICENSE.
-- Public text now uses US English consistently. The package description now
-  says "runtime-dependency-free" instead of "dependency-free", matching the
-  README; development dependencies are listed in NOTICE.md.
-- README, NOTICE, SECURITY, SUPPORT, CONTRIBUTING, and the Code of Conduct state
-  the license boundaries, warranty, and best-effort response expectations more
-  precisely, and no longer promise outcomes the project cannot guarantee.
-- The accessibility guide describes WCAG 2.2 AA as a design goal rather than a
-  conformance claim, and states keyboard and target-size behavior precisely.
-
-### Fixed
-
-- `privacy-scan --history` now scans the contents of every blob reachable in
-  Git history, including files that were later deleted or renamed, fails closed
-  when history cannot be read completely, and masks matched values in its
-  report.
-- The history scan keeps every path a blob appeared under and applies
-  denylist allowances per path, so identical content under an allowed and a
-  non-allowed path is still reported. Generic rules still run once per blob.
-
-### Added
-
-- `npm run test:privacy`, a regression test that runs the history scan against
-  disposable Git repositories with fictional canaries, including shared-blob
-  allowance cases and a real shallow clone. CI runs it before the privacy scan.
-
 ## [0.1.0] — 2026-09-28
 
-### Added
+First public release.
+
+### Site
 
 - Four build-time rendered routes: Home, Profile, Work, and Guide, plus a 404
   page, all readable without JavaScript.
@@ -51,6 +18,33 @@ project uses semantic versioning.
   stand-in if it fails to load, and an optional bounded Canvas sweep with a
   pause control.
 - Light and dark themes, reduced-motion, forced-colors, and print styles.
-- Site audit and identity/privacy scan scripts.
-- CI workflow with a read-only token and SHA-pinned actions.
-- Contribution, conduct, security, support, and notice documents.
+
+### Audits and CI
+
+- Site audit script for the build output.
+- Identity and privacy scan. With `--history`, it scans commit messages,
+  authors, every historical path, and the contents of every unique blob
+  reachable in Git history, including files that were later deleted or
+  renamed. It applies denylist allowances per path, masks matched values in its
+  report, and fails closed when history cannot be read completely.
+- `npm run test:privacy`, a regression test that runs the history scan against
+  disposable Git repositories with fictional canaries, including shared-blob
+  allowance cases and a real shallow clone.
+- CI workflow with a read-only token and SHA-pinned actions that runs the
+  typecheck, build, site audit, privacy regression test, generic history scan,
+  source-map check, and dependency audit.
+
+### Documentation and licensing
+
+- README, contributing guide, Code of Conduct, security policy, support
+  policy, and architecture, accessibility, customization, and deployment
+  guides, in US English.
+- MIT License for the source code, tooling, CI workflow, and documentation,
+  including documentation code examples. NOTICE.md excludes the Defensive
+  Signal and ASTRAYAN Web Studio names and marks, the fictional demonstration
+  identity and content, the bundled artwork and favicon, and any likeness,
+  including where they appear inside source or documentation files.
+- Adoption guidance that requires replacing the site name, footer attribution,
+  wordmark symbol, favicon, and artwork before publishing a derived site.
+- Private reporting guidance for security and conduct concerns, with a
+  fallback when private vulnerability reporting is not enabled.

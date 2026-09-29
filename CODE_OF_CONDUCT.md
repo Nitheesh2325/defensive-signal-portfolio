@@ -35,6 +35,12 @@ discussions, and any other channel where someone represents the project.
 Report concerns privately to the maintainers. If the repository lists no other
 private contact, use its private vulnerability reporting (the **Security** tab,
 then **Report a vulnerability**) and say that the report is about conduct.
+
+If that option is not available, open a public issue that only asks the
+maintainers for a private contact. Do not include names, details, or evidence
+of the concern in the issue; share those only once a private channel is
+agreed. This is the same fallback described in [`SECURITY.md`](SECURITY.md).
+
 Maintainers aim to handle reports confidentially and to review them as soon as
 they reasonably can.
 

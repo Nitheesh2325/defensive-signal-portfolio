@@ -39,9 +39,13 @@ MIT-licensed, but the fictional names, sample profile text, branding, and
 artwork that appear alongside them are not.
 
 You may keep the demonstration content, branding, and artwork while evaluating
-the starter locally. Replace them with your own before publishing a site built
-from it. Artwork you create yourself, including artwork you generate with your
-own settings in `scripts/generate-artwork.mjs`, is yours.
+the starter locally. Before publishing a site built from it, replace all of
+them, including the site name (`site.siteName`), the footer attribution
+(`site.credit`), the wordmark symbol, the favicon, and the bundled artwork.
+Publishing this repository does not grant permission to use the Defensive
+Signal or ASTRAYAN Web Studio names or marks. Artwork you create yourself,
+including artwork you generate with your own settings in
+`scripts/generate-artwork.mjs`, is yours.
 
 ## Fictional content
 

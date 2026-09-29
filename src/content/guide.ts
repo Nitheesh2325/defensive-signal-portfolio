@@ -31,7 +31,7 @@ export const guide: readonly GuideSection[] = [
     steps: [
       "Rewrite the person, contact, practice, work, and learning entries with facts you can support.",
       "Use your real contact addresses only where you are happy for them to be public.",
-      "Replace the bundled artwork and favicon. Like the demonstration content and branding, they are excluded from the MIT License; see NOTICE.md.",
+      "Replace all Defensive Signal and ASTRAYAN Web Studio branding: the site name (site.siteName), the footer attribution (site.credit), the wordmark symbol in src/render/layout.ts, the favicon, and the bundled artwork. These names and marks are excluded from the MIT License, and this starter does not grant permission to use them; see NOTICE.md.",
       "Set site.demonstration to false once no fictional content remains. The banner disappears.",
       "Set site.indexable to true and site.origin to your address when you want search engines to list the site.",
     ],

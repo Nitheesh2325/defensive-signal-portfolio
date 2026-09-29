@@ -49,12 +49,22 @@ npm run preview    # serve dist/ locally
 ## Make it yours
 
 1. Rewrite `src/content/profile.ts` with facts you can support.
-2. Set `site.demonstration` to `false` when no fictional content remains.
-3. Set `site.indexable` and `site.origin` when you are ready for search engines.
-4. Put identifiers you must never publish in a local `.privacy-denylist.json`
+2. Replace all Defensive Signal and ASTRAYAN Web Studio branding before you
+   publish a site built from the starter:
+   - the site name (`site.siteName`, "Defensive Signal");
+   - the footer attribution (`site.credit`), which names Defensive Signal and
+     ASTRAYAN Web Studio;
+   - the wordmark symbol (`MARK` in `src/render/layout.ts`);
+   - the bundled artwork (`public/artwork/`) and favicon (`public/favicon.svg`).
+
+   These names and marks are not licensed under MIT, and publishing this
+   repository does not grant permission to use them.
+3. Set `site.demonstration` to `false` when no fictional content remains.
+4. Set `site.indexable` and `site.origin` when you are ready for search engines.
+5. Put identifiers you must never publish in a local `.privacy-denylist.json`
    (ignored by Git, never committed) and run
    `npm run audit:privacy -- --history` before publishing.
-5. Deploy the `dist/` folder to any static host.
+6. Deploy the `dist/` folder to any static host.
 
 The full walkthrough is on the Guide route and in
 [`docs/customization.md`](docs/customization.md).

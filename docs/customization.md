@@ -31,7 +31,26 @@ Demonstration builds are `noindex, nofollow`. When you are ready:
   to add canonical links;
 - review `public/robots.txt` and, if you want one, add a sitemap.
 
-## 3. Artwork and images
+## 3. Replace the branding
+
+The Defensive Signal and ASTRAYAN Web Studio names and marks are not licensed
+under MIT (see `NOTICE.md`). Before you publish a site built from the starter,
+replace every one of them:
+
+- **site name** — `site.siteName` in `src/content/profile.ts`, which is
+  "Defensive Signal" in the demo and appears in the header and page titles;
+- **footer attribution** — `site.credit` in `src/content/profile.ts`, which
+  names Defensive Signal and ASTRAYAN Web Studio;
+- **wordmark symbol** — the `MARK` SVG in `src/render/layout.ts`, shown beside
+  the site name;
+- **favicon** — `public/favicon.svg`, which repeats the wordmark symbol;
+- **artwork** — the bundled contour artwork in `public/artwork/` (see below).
+
+Publishing this repository does not grant permission to use these names or
+marks, and a site built from it must not present itself as Defensive Signal or
+as an ASTRAYAN Web Studio work without separate permission.
+
+## 4. Artwork and images
 
 - Replace the bundled contour artwork and favicon before publishing. They are
   excluded from the MIT License (see `NOTICE.md`). Generate your own with a
@@ -43,18 +62,20 @@ Demonstration builds are `noindex, nofollow`. When you are ready:
 - Prefer SVG with presentation attributes. `<style>` blocks inside SVG may be
   blocked by a strict CSP header.
 
-## 4. Run the privacy scan with your own denylist
+## 5. Run the privacy scan with your own denylist
 
 The privacy scan works at two levels:
 
-- **Generic rules, everywhere.** CI runs the public-safe scan on pushes to
-  `main` and on pull requests: real-looking email addresses, phone numbers, local file paths,
-  API keys, private keys, long hex digests, source maps, hosts that are not on
-  the allow list, and image metadata. CI never sees your private identifiers.
-- **Your private denylist, locally.** Before you publish, run the scan on your
-  own machine with a denylist of names, employers, domains, and anything else
-  that must never appear. This local run is the pre-publication release gate;
-  the generic CI scan alone is not enough.
+- **Generic rules, in CI and locally.** CI runs the public-safe scan on pushes
+  to `main` and on pull requests. It looks for real-looking email addresses,
+  phone numbers, local file paths, API keys, private keys, long hex digests,
+  source maps, hosts that are not on the allow list, and image metadata. CI is
+  never given your private denylist.
+- **Your private denylist, locally only.** Before you publish, run the scan on
+  your own machine with a denylist of names, employers, domains, and anything
+  else that must never appear. This local run is the pre-publication release
+  gate; the generic CI scan alone cannot catch identifiers it does not know
+  about.
 
 Create `.privacy-denylist.json` in the project root, or keep the file anywhere
 outside the repository and point `DS_PRIVACY_DENYLIST` at it. The default file
@@ -97,11 +118,13 @@ contains a denylisted term appears in the report. Keep the report private.
 If history cannot be read completely (for example a shallow clone), the scan
 fails rather than passing on partial evidence.
 
-## 5. Keep the promises
+## 6. Keep the promises
 
 Before publishing, confirm:
 
 - [ ] no fictional content remains, and `site.demonstration` is `false`;
+- [ ] the site name, footer attribution, wordmark symbol, favicon, and artwork
+      are your own, with no Defensive Signal or ASTRAYAN Web Studio branding;
 - [ ] every claim can be backed by something you could show;
 - [ ] the accessibility checklist in `docs/accessibility.md` passes;
 - [ ] `npm run check` and `npm audit` pass;

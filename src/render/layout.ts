@@ -34,7 +34,11 @@ export const CSP =
   "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; " +
   "connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'";
 
-/** The wordmark symbol: three nested arcs over a baseline. Original, decorative. */
+/**
+ * The Defensive Signal wordmark symbol: three nested arcs over a baseline.
+ * Branding excluded from the MIT License (see NOTICE.md); replace it in any site
+ * you publish from this starter.
+ */
 const MARK = `<svg class="wordmark__mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path d="M4 26h24" /><path d="M8 26a8 8 0 0 1 16 0" /><path d="M12 26a4 4 0 0 1 8 0" /><path d="M2 26a14 14 0 0 1 28 0" /></svg>`;
 
 const banner = (c: PortfolioContent): string =>
