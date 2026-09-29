@@ -33,14 +33,14 @@ Demonstration builds are `noindex, nofollow`. When you are ready:
 
 ## 3. Replace the branding
 
-The Defensive Signal and ASTRAYAN Web Studio names and marks are not licensed
-under MIT (see `NOTICE.md`). Before you publish a site built from the starter,
-replace every one of them:
+The Defensive Signal name and marks and the creator's footer attribution are
+not licensed under MIT (see `NOTICE.md`). Before you publish a site built from
+the starter, replace every one of them unless you have separate permission:
 
 - **site name** — `site.siteName` in `src/content/profile.ts`, which is
   "Defensive Signal" in the demo and appears in the header and page titles;
 - **footer attribution** — `site.credit` in `src/content/profile.ts`, which
-  names Defensive Signal and ASTRAYAN Web Studio;
+  names Defensive Signal and its creator;
 - **wordmark symbol** — the `MARK` SVG in `src/render/layout.ts`, shown beside
   the site name;
 - **favicon** — `public/favicon.svg`, which repeats the wordmark symbol;
@@ -48,7 +48,8 @@ replace every one of them:
 
 Publishing this repository does not grant permission to use these names or
 marks, and a site built from it must not present itself as Defensive Signal or
-as an ASTRAYAN Web Studio work without separate permission.
+as the creator's work without separate permission. Keep the copyright
+notice in `LICENSE`, as the MIT License requires.
 
 ## 4. Artwork and images
 
@@ -78,17 +79,25 @@ The privacy scan works at two levels:
   about.
 
 The host allow list covers reserved example domains, loopback addresses, the
-SVG namespace, and the npm registry. One narrower exception exists: two exact
-URLs, the README's CI status badge and its link, are allowed on `github.com`
-through `ALLOWED_URLS` in `scripts/privacy-scan.mjs`. Only a character-for-
-character match passes, so any other GitHub URL, including other paths in the
-same repository, still fails. If you fork the starter, replace those two URLs
-with your own repository's badge URLs.
+SVG namespace, and the npm registry. One narrower exception exists: three exact
+URLs are allowed on `github.com` through `ALLOWED_URLS` in
+`scripts/privacy-scan.mjs`. They are the README's CI status badge, the badge's
+link, and the creator's GitHub profile in the README ownership line. Only a
+character-for-character match passes, so any other GitHub URL, including other
+paths in the same repository or under the same account, still fails. If you
+fork the starter, replace those URLs with your own.
 
 Create `.privacy-denylist.json` in the project root, or keep the file anywhere
 outside the repository and point `DS_PRIVACY_DENYLIST` at it. The default file
 name is ignored by Git. Never commit the denylist: the list of things you are
-protecting is itself private.
+protecting is itself private. Keep it somewhere persistent; a temporary folder
+can be cleared by a restart.
+
+Once you supply a denylist, the scan depends on it. If `DS_PRIVACY_DENYLIST` is
+set, or `.privacy-denylist.json` exists, and the file is missing, unreadable,
+not valid JSON, or has no `terms` list, the scan exits with status 2 and a
+short error that never quotes the file. It does not fall back to the generic
+rules. The generic rules run alone only when no denylist is supplied.
 
 ```json
 {
@@ -132,7 +141,8 @@ Before publishing, confirm:
 
 - [ ] no fictional content remains, and `site.demonstration` is `false`;
 - [ ] the site name, footer attribution, wordmark symbol, favicon, and artwork
-      are your own, with no Defensive Signal or ASTRAYAN Web Studio branding;
+      are your own, with no Defensive Signal branding or creator attribution
+      unless you have separate permission;
 - [ ] every claim can be backed by something you could show;
 - [ ] the accessibility checklist in `docs/accessibility.md` passes;
 - [ ] `npm run check` and `npm audit` pass;

@@ -220,17 +220,18 @@ try {
     check("--history outside a Git repository fails", result.status === 1, result.output);
   }
 
-  // 8. The README CI badge exception allows only its two exact URLs.
+  // 8. The README exceptions allow only their three exact URLs.
   {
-    const repoBase = ["https:", "", "github.com", "Nitheesh2325", "defensive-signal-portfolio"].join("/");
+    const profile = ["https:", "", "github.com", "Nitheesh2325"].join("/");
+    const repoBase = `${profile}/defensive-signal-portfolio`;
     const badge = `${repoBase}/actions/workflows/ci.yml/badge.svg?branch=main`;
     const badgeLink = `${repoBase}/actions/workflows/ci.yml?query=branch%3Amain`;
 
     const allowed = makeRepo("badge-allowed");
-    allowed.write("badge.md", `[![CI](${badge})](${badgeLink})\n`);
-    allowed.commit("Add CI badge");
+    allowed.write("badge.md", `[![CI](${badge})](${badgeLink})\n\nCreated by [the creator](${profile}).\n`);
+    allowed.commit("Add CI badge and profile link");
     const pass = scan(allowed.dir, { withDenylist: false });
-    check("the exact README CI badge and link are allowed", pass.status === 0, pass.output);
+    check("the exact README CI badge, badge link, and profile link are allowed", pass.status === 0, pass.output);
 
     const unrelated = [
       ["https:", "", "github.com", "someone-else", "defensive-signal-portfolio", "actions", "workflows", "ci.yml", "badge.svg?branch=main"].join("/"),
@@ -238,6 +239,9 @@ try {
       `${badge}&extra=1`,
       `${repoBase}/actions/workflows/ci.yml`,
       ["https:", "", "github.com", ""].join("/"),
+      `${profile}/`,
+      `${profile}/another-repository`,
+      `${profile}?tab=repositories`,
     ];
     const blocked = makeRepo("badge-unrelated");
     blocked.write("links.md", `${unrelated.join("\n")}\n`);
@@ -245,6 +249,41 @@ try {
     const fail = scan(blocked.dir, { withDenylist: false });
     const flagged = unrelated.every((_, i) => new RegExp(`links\\.md:${i + 1}\\s+external host not on the allow list`).test(fail.output));
     check("unrelated or altered GitHub URLs still fail", fail.status === 1 && flagged, fail.output);
+  }
+
+  // 9. A supplied denylist that cannot be used stops the scan (exit 2) instead of
+  //    falling back to generic rules, and the error never echoes its contents.
+  {
+    const repo = makeRepo("denylist-errors");
+    const bad = join(workspace, "bad-denylists");
+    mkdirSync(bad, { recursive: true });
+    const malformed = join(bad, "malformed.json");
+    writeFileSync(malformed, `{ "terms": ["${CANARY_NAME}", `);
+    const wrongShape = join(bad, "wrong-shape.json");
+    writeFileSync(wrongShape, JSON.stringify({ terms: CANARY_NAME }));
+    const emptyTerms = join(bad, "empty-terms.json");
+    writeFileSync(emptyTerms, JSON.stringify({ terms: [] }));
+    const badAllow = join(bad, "bad-allow.json");
+    writeFileSync(badAllow, JSON.stringify({ terms: [CANARY_NAME], allow: { [CANARY_NAME]: "LICENSE" } }));
+    const cases = [
+      ["missing file", join(bad, "does-not-exist.json")],
+      ["unreadable path (a directory)", bad],
+      ["malformed JSON", malformed],
+      ["terms that are not a list", wrongShape],
+      ["an empty terms list", emptyTerms],
+      ["an allow entry that is not a list", badAllow],
+      ["an empty DS_PRIVACY_DENYLIST value", ""],
+    ];
+    for (const [label, path] of cases) {
+      const result = scan(repo.dir, { list: path });
+      check(
+        `supplied denylist with ${label} fails closed without leaking contents`,
+        result.status === 2 && /Private denylist could not be used/.test(result.output) && !result.output.includes(CANARY_NAME) && !/PASS/.test(result.output),
+        result.output,
+      );
+    }
+    const generic = scan(repo.dir, { withDenylist: false });
+    check("generic-only scan still runs when no denylist is supplied", generic.status === 0 && /No denylist supplied/.test(generic.output), generic.output);
   }
 } finally {
   rmSync(workspace, { recursive: true, force: true });

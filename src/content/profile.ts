@@ -18,7 +18,7 @@ export const content: PortfolioContent = {
     demonstration: true,
     indexable: false,
     origin: "",
-    credit: "Defensive Signal starter · ASTRAYAN Web Studio",
+    credit: "Defensive Signal starter · Nitheesh Chanambatla",
   },
 
   person: {

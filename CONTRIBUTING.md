@@ -56,6 +56,6 @@ request which of these you tested and which you did not.
 
 By contributing, you agree that your contributions to the source code, tooling,
 CI workflow, and documentation are licensed under the MIT License in this
-repository, as described in [`NOTICE.md`](NOTICE.md). Do not contribute names,
-logos, artwork, likenesses, or personal content that you do not have permission
-to share.
+repository, as described in [`NOTICE.md`](NOTICE.md). You keep the copyright
+in your own contributions. Do not contribute names, logos, artwork,
+likenesses, or personal content that you do not have permission to share.

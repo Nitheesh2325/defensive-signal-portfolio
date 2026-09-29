@@ -2,7 +2,9 @@
 
 **Defensive Signal — Accessible Cybersecurity Portfolio Starter**
 
-Copyright (c) 2026 Nitheesh Chanambatla, trading as ASTRAYAN Web Studio.
+Copyright (c) 2026 Nitheesh Chanambatla.
+
+Defensive Signal is created and maintained by Nitheesh Chanambatla.
 
 ## What the MIT License covers
 
@@ -22,7 +24,11 @@ The MIT License does **not** grant any right to use the following material:
 
 - **Defensive Signal** — the name and its branding, including the wordmark
   symbol drawn in `src/render/layout.ts` and the favicon;
-- **ASTRAYAN Web Studio** — the name, wordmark, symbols, logos, and trade dress;
+- **the creator's name as a site attribution** — the footer credit naming
+  Nitheesh Chanambatla (`site.credit` in `src/content/profile.ts`). A site
+  built from the starter must not present itself as the creator's work. This
+  does not affect the copyright notice in `LICENSE`, which the MIT License
+  requires you to keep with copies of the software;
 - **Avery Example** — the fictional identity and all demonstration content,
   including the profile, contact details, principles, practice areas, case
   notes, and learning notes in `src/content/profile.ts`;
@@ -38,14 +44,14 @@ documentation file. For example, the documentation's code examples are
 MIT-licensed, but the fictional names, sample profile text, branding, and
 artwork that appear alongside them are not.
 
-You may keep the demonstration content, branding, and artwork while evaluating
-the starter locally. Before publishing a site built from it, replace all of
-them, including the site name (`site.siteName`), the footer attribution
-(`site.credit`), the wordmark symbol, the favicon, and the bundled artwork.
-Publishing this repository does not grant permission to use the Defensive
-Signal or ASTRAYAN Web Studio names or marks. Artwork you create yourself,
-including artwork you generate with your own settings in
-`scripts/generate-artwork.mjs`, is yours.
+You may keep the demonstration content, branding, attribution, and artwork
+while evaluating the starter locally. Before publishing a site built from it,
+replace the Defensive Signal name (`site.siteName`), the footer attribution
+(`site.credit`), the wordmark symbol, the favicon, and the bundled artwork,
+unless you have separate permission to use them. Publishing this repository
+does not grant that permission. Artwork you create yourself, including artwork
+you generate with your own settings in `scripts/generate-artwork.mjs`, is
+yours.
 
 ## Fictional content
 

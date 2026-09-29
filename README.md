@@ -1,12 +1,15 @@
 # Defensive Signal — Accessible Cybersecurity Portfolio Starter
 
 [![CI](https://github.com/Nitheesh2325/defensive-signal-portfolio/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Nitheesh2325/defensive-signal-portfolio/actions/workflows/ci.yml?query=branch%3Amain)
-· [MIT License](LICENSE) · Version [0.1.0](CHANGELOG.md)
+· [MIT License](LICENSE) · Version [0.1.1](CHANGELOG.md)
 
-Defensive Signal is a small, runtime-dependency-free starter for building an
-honest, accessible portfolio for security work. It ships with a clearly labeled
-fictional practitioner, **Avery Example**, so you can see the shape of a
-finished site before replacing the content with your own.
+Created and maintained by [Nitheesh Chanambatla](https://github.com/Nitheesh2325).
+
+Defensive Signal is a small, responsive, multi-route starter for building an
+honest, accessible cybersecurity portfolio. It is built with TypeScript and
+Vite, has no runtime dependencies, and ships with a clearly labeled fictional
+practitioner, **Avery Example**, so you can see the shape of a finished site
+before replacing the content with your own.
 
 > **Demonstration content.** Avery Example is not a real person. Every case
 > note is invented. Contact details use the reserved `example.invalid` domain.
@@ -23,27 +26,37 @@ npm run dev
 
 Then open <http://127.0.0.1:5173> in your browser.
 
-## What you get
+## Features
 
-- **Four routes** — Home, Profile, Work, and Guide — each a complete HTML page
-  that reads well with JavaScript turned off.
+- **Responsive multi-route site.** Home, Profile, Work, and Guide pages, plus a
+  404 page, built with TypeScript and Vite. Layouts reflow from wide desktop
+  screens down to 320 CSS pixels.
+- **Progressive enhancement.** Every page is complete HTML generated at build
+  time and stays readable with JavaScript turned off. Scripts only add
+  optional behavior.
 - **One typed content module.** All profile and case-note content on Home,
   Profile, and Work comes from `src/content/profile.ts`, checked against
   `src/content/schema.ts`. Interface labels such as headings and buttons live
   in `src/render/pages.ts`. The schema has no fields for skill percentages or
   invented metrics.
-- **Case notes** structured as context, approach, result, and what is still
-  open, with a shareable practice-area filter on the Work route.
-- **Original abstract artwork** (contour rings around a quiet center) with an
-  optional Canvas sweep that respects reduced motion, pauses offscreen, and has
-  a visible pause control.
-- **Light and dark themes** that follow the visitor's system setting.
-- **No runtime dependencies, analytics, trackers, cookies, storage, web fonts,
-  or network requests** after the page loads. A strict Content Security Policy
-  is added to every built page.
-- **Audits you can run locally and in CI:** a site audit of the build output
-  and an identity/privacy scan of the repository, the build, and every unique
-  file content (blob) in Git history, including content from deleted files.
+- **Case notes with shareable filtering.** Each note records the context,
+  approach, result, and what is still open. The Work filter stores the
+  selected practice area in the URL, so filtered views can be shared and
+  browser Back and Forward work as expected.
+- **Optional, bounded motion.** Original abstract artwork with an optional
+  Canvas sweep that has a visible pause control, pauses when offscreen or
+  hidden, and never starts when reduced motion is requested.
+- **Accessibility foundations.** Keyboard navigation with a visible focus
+  indicator, a skip link, forced-colors support, and light and dark themes
+  that follow the visitor's system setting. See
+  [`docs/accessibility.md`](docs/accessibility.md) for the design goals and
+  what still needs manual testing.
+- **Strict Content Security Policy** on every built page.
+- **No runtime dependencies, analytics, trackers, cookies, client-side
+  storage, web fonts, or external runtime requests.**
+- **Privacy audits.** A scan of the current files, the build output, and Git
+  history, including content from deleted and renamed files, plus a site audit
+  of the build. Both run locally and in a read-only GitHub Actions workflow.
 
 ## Build and check
 
@@ -55,16 +68,17 @@ npm run preview    # serve dist/ locally
 ## Make it yours
 
 1. Rewrite `src/content/profile.ts` with facts you can support.
-2. Replace all Defensive Signal and ASTRAYAN Web Studio branding before you
-   publish a site built from the starter:
-   - the site name (`site.siteName`, "Defensive Signal");
+2. Replace the starter's branding and attribution before you publish a site
+   built from it, unless you have separate permission to use them:
+   - the Defensive Signal name (`site.siteName`);
    - the footer attribution (`site.credit`), which names Defensive Signal and
-     ASTRAYAN Web Studio;
+     its creator;
    - the wordmark symbol (`MARK` in `src/render/layout.ts`);
    - the bundled artwork (`public/artwork/`) and favicon (`public/favicon.svg`).
 
-   These names and marks are not licensed under MIT, and publishing this
-   repository does not grant permission to use them.
+   These are not licensed under MIT, and publishing this repository does not
+   grant permission to use them. Keep the copyright notice in `LICENSE`, as the
+   MIT License requires.
 3. Set `site.demonstration` to `false` when no fictional content remains.
 4. Set `site.indexable` and `site.origin` when you are ready for search engines.
 5. Put identifiers you must never publish in a local `.privacy-denylist.json`
@@ -104,11 +118,10 @@ docs/                                           architecture and guides
 The copyright notice is in [`LICENSE`](LICENSE) and [`NOTICE.md`](NOTICE.md).
 The source code, tooling, CI workflow, and documentation, including the code
 examples in the documentation, are released under the [MIT License](LICENSE).
-The Defensive Signal and ASTRAYAN Web Studio names and branding, the fictional
-Avery Example identity and demonstration content, the generated and favicon
-artwork, and any likeness are **not** licensed under MIT, even where they appear
-inside a source or documentation file. See [`NOTICE.md`](NOTICE.md) for the
-exact boundaries.
+The Defensive Signal name and branding, the creator's footer attribution, the
+fictional Avery Example identity and demonstration content, the generated and
+favicon artwork, and any likeness are **not** licensed under MIT, even where
+they appear inside a source or documentation file. See
+[`NOTICE.md`](NOTICE.md) for the exact boundaries.
 
-Published by ASTRAYAN Web Studio. The starter is provided as is, without
-warranty, as stated in the license.
+The starter is provided as is, without warranty, as stated in the license.

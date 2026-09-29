@@ -3,17 +3,37 @@
 All notable changes to this project are recorded here, newest first. The
 project uses semantic versioning.
 
-## [Unreleased]
+## [0.1.1] — 2026-09-29
 
 ### Changed
 
+- Ownership and attribution: LICENSE, NOTICE.md, the package author, and the
+  demonstration footer attribution now name the project's creator directly,
+  and the README adds a "Created and maintained by" line linking to the
+  creator's GitHub profile. The previous studio trading name is removed from
+  all current files.
+- NOTICE.md and the adoption guidance now require replacing the Defensive
+  Signal name, the creator's footer attribution, the wordmark, the artwork, and
+  the favicon before publishing a derived site, unless separately permitted,
+  while keeping the MIT copyright notice.
+- CONTRIBUTING.md states that contributors keep the copyright in their own
+  contributions. The Code of Conduct and security policy refer to a single
+  maintainer.
 - README: a metadata row with the official CI status badge and plain links to
   the license and changelog, a Demo section explaining that no hosted demo is
-  provided and how to run it locally, and a "Build and check" section in place
-  of "Quick start".
-- Privacy scan: two exact URLs, the README CI badge and its link, are allowed
-  on `github.com`. Any other GitHub URL still fails, and the regression test
-  covers both cases.
+  provided and how to run it locally, a "Build and check" section in place of
+  "Quick start", and a "Features" section that describes the verified
+  capabilities in place of "What you get".
+- Privacy scan: three exact URLs are allowed on `github.com`: the README CI
+  badge, its link, and the creator's profile link. Any other GitHub URL still
+  fails, and the regression test covers both cases.
+
+### Fixed
+
+- Privacy scan: a supplied denylist that is missing, unreadable, malformed, or
+  structurally invalid now stops the scan with exit status 2 and an error that
+  does not quote the file, instead of silently falling back to the generic
+  rules. Regression tests cover each case.
 
 ## [0.1.0] — 2026-09-28
 
@@ -53,9 +73,9 @@ First public release.
   guides, in US English.
 - MIT License for the source code, tooling, CI workflow, and documentation,
   including documentation code examples. NOTICE.md excludes the Defensive
-  Signal and ASTRAYAN Web Studio names and marks, the fictional demonstration
-  identity and content, the bundled artwork and favicon, and any likeness,
-  including where they appear inside source or documentation files.
+  Signal name and marks, the publisher's name and marks, the fictional
+  demonstration identity and content, the bundled artwork and favicon, and any
+  likeness, including where they appear inside source or documentation files.
 - Adoption guidance that requires replacing the site name, footer attribution,
   wordmark symbol, favicon, and artwork before publishing a derived site.
 - Private reporting guidance for security and conduct concerns, with a

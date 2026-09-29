@@ -20,6 +20,11 @@
 //
 // Matching is case-insensitive. `allow` lists files where a term is expected.
 //
+// If DS_PRIVACY_DENYLIST is set, or .privacy-denylist.json exists, the file must
+// be readable, valid JSON, and contain a non-empty "terms" list; otherwise the
+// scan exits with status 2 instead of running without it. Without either, the
+// generic rules run alone.
+//
 // Findings name the location (file and line, or commit/blob/path for history).
 // A matched denylisted term is printed as [redacted] and other matches are
 // masked, but locations show file paths as they are, so keep reports private.
@@ -70,16 +75,59 @@ const allFiles = [...new Set([...sourceFiles, ...distFiles])].filter((f) => exis
 const rel = (f) => relative(root, f).split("\\").join("/");
 
 /* ------------------------------------------------------------- denylist */
-const denylistPath = process.env.DS_PRIVACY_DENYLIST || join(root, ".privacy-denylist.json");
+// A denylist that was supplied but cannot be used is a hard failure: the scan
+// never falls back to generic rules in that case. Error messages name only the
+// kind of problem, never the file's contents.
+const DENYLIST_ERROR_EXIT = 2;
+const denylistEnv = process.env.DS_PRIVACY_DENYLIST;
+const denylistExplicit = denylistEnv !== undefined;
+const denylistPath = denylistExplicit ? denylistEnv : join(root, ".privacy-denylist.json");
+
+const denylistFailure = (reason) => {
+  console.error(`Private denylist could not be used: ${reason}. The scan stops rather than running without it.`);
+  process.exit(DENYLIST_ERROR_EXIT);
+};
+
+function loadDenylist(path) {
+  if (path.trim() === "") denylistFailure("DS_PRIVACY_DENYLIST is set but empty");
+  if (!existsSync(path)) denylistFailure("the file does not exist");
+  let text;
+  try {
+    if (!statSync(path).isFile()) throw new Error("not a regular file");
+    text = readFileSync(path, "utf8");
+  } catch {
+    denylistFailure("the file could not be read");
+  }
+  let parsed;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    // The parser's own message can quote file contents, so it is not shown.
+    denylistFailure("the file is not valid JSON");
+  }
+  const isStringList = (value) => Array.isArray(value) && value.every((t) => typeof t === "string" && t.trim().length > 1);
+  const valid =
+    parsed !== null &&
+    typeof parsed === "object" &&
+    !Array.isArray(parsed) &&
+    isStringList(parsed.terms) &&
+    parsed.terms.length > 0 &&
+    (parsed.allow === undefined ||
+      (parsed.allow !== null &&
+        typeof parsed.allow === "object" &&
+        !Array.isArray(parsed.allow) &&
+        Object.values(parsed.allow).every((files) => Array.isArray(files) && files.every((f) => typeof f === "string"))));
+  if (!valid) denylistFailure("the file does not match the expected structure");
+  return { terms: parsed.terms, allow: parsed.allow ?? {} };
+}
+
 let terms = [];
 let allow = {};
-if (existsSync(denylistPath)) {
-  const parsed = JSON.parse(readFileSync(denylistPath, "utf8"));
-  terms = (parsed.terms ?? []).filter((t) => typeof t === "string" && t.trim().length > 1);
-  allow = parsed.allow ?? {};
+if (denylistExplicit || existsSync(denylistPath)) {
+  ({ terms, allow } = loadDenylist(denylistPath));
   console.log(`Denylist loaded: ${terms.length} term(s).`);
 } else {
-  console.log("No denylist found. Generic rules only (see the header of this script).");
+  console.log("No denylist supplied. Generic rules only (see the header of this script).");
 }
 
 /* --------------------------------------------------------- generic rules */
@@ -93,11 +141,13 @@ const ALLOWED_HOSTS = [
 ];
 // Exact URLs allowed on hosts that are otherwise blocked. Only a character-for-
 // character match is accepted, so other paths, repositories, or query strings on
-// the same host still fail. These are the README's CI status badge and its link.
-// If you fork the starter, replace them with your own repository's URLs.
+// the same host still fail. These are the README's CI status badge, its link,
+// and the creator's GitHub profile in the README ownership line. If you fork the
+// starter, replace them with your own URLs.
 const ALLOWED_URLS = new Set([
   "https://github.com/Nitheesh2325/defensive-signal-portfolio/actions/workflows/ci.yml/badge.svg?branch=main",
   "https://github.com/Nitheesh2325/defensive-signal-portfolio/actions/workflows/ci.yml?query=branch%3Amain",
+  "https://github.com/Nitheesh2325",
 ]);
 const ALLOWED_EMAIL = /@(([a-z0-9-]+\.)*example\.(invalid|com|org|net))$/i;
 

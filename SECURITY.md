@@ -18,9 +18,9 @@ vulnerability. Include in your private report:
 - steps to reproduce, or a minimal proof of concept;
 - the impact you believe it has.
 
-The maintainers aim to acknowledge reports, assess them, and coordinate a fix
+The maintainer aims to acknowledge reports, assess them, and coordinate a fix
 and disclosure where one is needed. Response times are best effort and not
-guaranteed. Please give the maintainers reasonable time to release a fix before
+guaranteed. Please give the maintainer reasonable time to release a fix before
 sharing details publicly.
 
 ## Scope
