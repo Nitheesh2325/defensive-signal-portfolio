@@ -35,6 +35,9 @@ The MIT License does **not** grant any right to use the following material:
 - **artwork** — the generated artwork in `public/artwork/` and the favicon
   artwork in `public/favicon.svg`, including identical copies regenerated with
   the default settings of `scripts/generate-artwork.mjs`;
+- **documentation images** — the screenshots and social-preview image in
+  `docs/media/`, which show the Defensive Signal branding, the fictional
+  demonstration content, and the bundled artwork;
 - **likenesses and media** — any portrait, photograph, likeness, or other media
   added in future without separate permission (this repository contains none);
 - **third-party trademarks** mentioned anywhere in the repository.

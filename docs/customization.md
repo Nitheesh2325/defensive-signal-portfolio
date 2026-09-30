@@ -57,6 +57,11 @@ notice in `LICENSE`, as the MIT License requires.
   excluded from the MIT License (see `NOTICE.md`). Generate your own with a
   different seed and colors in `scripts/generate-artwork.mjs`, or use your own
   original work.
+- Replace or remove the documentation images in `docs/media/` (two
+  screenshots and a social-preview image). They show this starter's branding,
+  fictional content, and artwork, which are excluded from the MIT License. If
+  you capture your own, strip metadata and write alt text that describes what
+  each image shows.
 - Do not publish a photograph of anyone without their permission.
 - Strip metadata from any raster image you add. The privacy scan fails on EXIF
   and XMP blocks it can detect.

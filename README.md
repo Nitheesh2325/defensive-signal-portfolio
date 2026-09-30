@@ -11,6 +11,10 @@ Vite, has no runtime dependencies, and ships with a clearly labeled fictional
 practitioner, **Avery Example**, so you can see the shape of a finished site
 before replacing the content with your own.
 
+Built with TypeScript · HTML · CSS · Vite · Canvas 2D · SVG · GitHub Actions.
+The `.mjs` files under `scripts/` are Node-based audit and build tooling; they
+are not delivered to the browser as part of the site.
+
 > **Demonstration content.** Avery Example is not a real person. Every case
 > note is invented. Contact details use the reserved `example.invalid` domain.
 
@@ -25,6 +29,14 @@ npm run dev
 ```
 
 Then open <http://127.0.0.1:5173> in your browser.
+
+### Screenshots
+
+These show the fictional demonstration content.
+
+![Home page of the fictional Avery Example demo in the light theme at desktop width, with the name, a short introduction, two action buttons, and the contour artwork beside its Pause motion button.](docs/media/defensive-signal-home-desktop.webp)
+
+<img src="docs/media/defensive-signal-work-mobile.webp" width="300" alt="Work page of the fictional demo in the dark theme at phone width, with the Case notes heading and the practice-area filter buttons.">
 
 ## Features
 

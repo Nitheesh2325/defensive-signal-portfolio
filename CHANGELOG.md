@@ -3,6 +3,19 @@
 All notable changes to this project are recorded here, newest first. The
 project uses semantic versioning.
 
+## [Unreleased]
+
+### Added
+
+- README technology line (TypeScript · HTML · CSS · Vite · Canvas 2D · SVG ·
+  GitHub Actions), with a note that the `.mjs` files in `scripts/` are Node
+  tooling rather than browser code.
+- Documentation images in `docs/media/`: a desktop screenshot, a mobile
+  screenshot, and a 1280×640 social-preview image, all showing only the
+  fictional demonstration and stripped of metadata. The README shows both
+  screenshots with alt text; NOTICE.md and the customization guide list the
+  images among the material adopters must replace.
+
 ## [0.1.1] — 2026-09-29
 
 ### Changed
